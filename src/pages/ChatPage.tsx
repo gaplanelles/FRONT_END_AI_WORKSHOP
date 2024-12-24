@@ -297,11 +297,17 @@ function ChatPage() {
         <div className="chat-page-container col-6">
           <div className="chat-interface">
             <div className="container">
-              <img
-                src="https://upload.wikimedia.org/wikipedia/commons/5/50/Oracle_logo.svg"
-                alt="Oracle Logo"
-                className="oracle-logo"
-              />
+              <div className="mb-3 d-flex">
+                <div />
+                <img
+                  src="https://upload.wikimedia.org/wikipedia/commons/5/50/Oracle_logo.svg"
+                  alt="Oracle Logo"
+                  className="oracle-logo"
+                />
+                <div>
+                  <i className="fas fa-lg fa-robot" role="button" />
+                </div>
+              </div>
               <div id="chatBox" ref={chatBoxRef}>
                 {messages.map((msg: any, index: number) => (
                   <div key={index} className={`message ${msg.type}-message`}>
@@ -335,23 +341,23 @@ function ChatPage() {
         </div>
       </div>
       <div className="d-flex justify-content-center">
-      <div className="bottom-section">
-        <aside className="sidebar">
-          <RAGConfigDisplay
-            configData={configData}
-            metadata={metadata}
-            error={error}
-          />
-        </aside>
-        <div className="sources-display">
-          <div className="sources-header">
-            <h3>Sources</h3>
-          </div>
-          <div className="sources-content">
-            <SourceTabs sources={sources} />
+        <div className="bottom-section">
+          <aside className="sidebar">
+            <RAGConfigDisplay
+              configData={configData}
+              metadata={metadata}
+              error={error}
+            />
+          </aside>
+          <div className="sources-display">
+            <div className="sources-header">
+              <h3>Sources</h3>
+            </div>
+            <div className="sources-content">
+              <SourceTabs sources={sources} />
+            </div>
           </div>
         </div>
-      </div>
       </div>
     </>
   );

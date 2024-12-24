@@ -199,6 +199,7 @@ const OAvatar: React.FC = () => {
         ref={videoRef}
         id="avatarVideo"
         className="avatar-video"
+        controls={true}
         playsInline
       />
       <div className="controls">
