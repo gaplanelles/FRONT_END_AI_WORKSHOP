@@ -1,0 +1,109 @@
+
+> rag-frontend@1.0.0 start
+> react-scripts start
+
+(node:1434888) [DEP_WEBPACK_DEV_SERVER_ON_AFTER_SETUP_MIDDLEWARE] DeprecationWarning: 'onAfterSetupMiddleware' option is deprecated. Please use the 'setupMiddlewares' option.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+(node:1434888) [DEP_WEBPACK_DEV_SERVER_ON_BEFORE_SETUP_MIDDLEWARE] DeprecationWarning: 'onBeforeSetupMiddleware' option is deprecated. Please use the 'setupMiddlewares' option.
+Starting the development server...
+
+Compiled successfully!
+
+You can now view rag-frontend in the browser.
+
+  Local:            http://localhost:3000
+  On Your Network:  http://10.0.0.24:3000
+
+Note that the development build is not optimized.
+To create a production build, use npm run build.
+
+assets by path static/ 2.46 MiB
+  asset static/js/bundle.js 2.11 MiB [emitted] (name: main) 1 related asset
+  asset static/media/background.dfa6f0fedc47e05094c2.png 354 KiB [emitted] [immutable] [from: public/images/background.png] (auxiliary name: main)
+  asset static/js/node_modules_web-vitals_dist_web-vitals_js.chunk.js 7.23 KiB [emitted] 1 related asset
+asset asset-manifest.json 546 bytes [emitted]
+asset index.html 396 bytes [emitted]
+cached modules 1.89 MiB (javascript) 354 KiB (asset) 32.8 KiB (runtime) [cached] 155 modules
+webpack 5.95.0 compiled successfully in 1444 ms
+ INFO  Accepting connections at http://localhost:3000
+ HTTP  10/19/2024 10:19:59 AM 141.143.213.38 GET /
+ HTTP  10/19/2024 10:19:59 AM 141.143.213.38 Returned 200 in 27 ms
+ HTTP  10/19/2024 10:19:59 AM 141.143.213.38 GET /static/js/main.cf18d741.js
+ HTTP  10/19/2024 10:19:59 AM 141.143.213.38 Returned 304 in 2 ms
+ HTTP  10/19/2024 10:20:00 AM 141.143.213.38 GET /static/css/main.9e141168.css
+ HTTP  10/19/2024 10:20:00 AM 141.143.213.38 Returned 304 in 4 ms
+ HTTP  10/19/2024 10:20:00 AM 141.143.213.38 GET /static/media/background.dfa6f0fedc47e05094c2.png
+ HTTP  10/19/2024 10:20:00 AM 141.143.213.38 Returned 304 in 4 ms
+ HTTP  10/19/2024 10:20:00 AM 141.143.213.38 GET /favicon.ico
+ HTTP  10/19/2024 10:20:00 AM 141.143.213.38 Returned 200 in 1 ms
+ HTTP  10/19/2024 10:20:01 AM 141.143.213.38 GET /favicon.ico
+ HTTP  10/19/2024 10:20:01 AM 141.143.213.38 Returned 304 in 2 ms
+ HTTP  10/19/2024 10:23:38 AM 141.143.213.38 GET /chat
+ HTTP  10/19/2024 10:23:38 AM 141.143.213.38 Returned 200 in 1 ms
+ HTTP  10/19/2024 10:23:38 AM 141.143.213.38 GET /static/js/main.cf18d741.js
+ HTTP  10/19/2024 10:23:38 AM 141.143.213.38 Returned 304 in 2 ms
+ HTTP  10/19/2024 10:23:38 AM 141.143.213.38 GET /static/css/main.9e141168.css
+ HTTP  10/19/2024 10:23:38 AM 141.143.213.38 Returned 304 in 1 ms
+ HTTP  10/19/2024 10:23:39 AM 141.143.213.38 GET /favicon.ico
+ HTTP  10/19/2024 10:23:39 AM 141.143.213.38 Returned 304 in 1 ms
+ HTTP  10/19/2024 10:23:45 AM 141.143.213.38 GET /static/css/main.9e141168.css
+ HTTP  10/19/2024 10:23:45 AM 141.143.213.38 Returned 304 in 1 ms
+ HTTP  10/19/2024 10:23:45 AM 141.143.213.38 GET /static/js/main.cf18d741.js.map
+ HTTP  10/19/2024 10:23:45 AM 141.143.213.38 Returned 304 in 4 ms
+ HTTP  10/19/2024 10:23:45 AM 141.143.213.38 GET /static/css/main.9e141168.css.map
+ HTTP  10/19/2024 10:23:45 AM 141.143.213.38 Returned 304 in 2 ms
+ HTTP  10/19/2024 10:26:34 AM 141.143.213.38 GET /chat
+ HTTP  10/19/2024 10:26:34 AM 141.143.213.38 Returned 304 in 1 ms
+ HTTP  10/19/2024 10:26:35 AM 141.143.213.38 GET /static/js/main.cf18d741.js
+ HTTP  10/19/2024 10:26:35 AM 141.143.213.38 Returned 304 in 1 ms
+ HTTP  10/19/2024 10:26:35 AM 141.143.213.38 GET /static/css/main.9e141168.css
+ HTTP  10/19/2024 10:26:35 AM 141.143.213.38 Returned 304 in 1 ms
+ HTTP  10/19/2024 10:26:35 AM 141.143.213.38 GET /static/media/background.dfa6f0fedc47e05094c2.png
+ HTTP  10/19/2024 10:26:35 AM 141.143.213.38 Returned 304 in 1 ms
+ HTTP  10/19/2024 10:26:35 AM 141.143.213.38 GET /favicon.ico
+ HTTP  10/19/2024 10:26:35 AM 141.143.213.38 Returned 304 in 1 ms
+ HTTP  10/19/2024 10:28:46 AM 141.143.213.38 GET /chat
+ HTTP  10/19/2024 10:28:46 AM 141.143.213.38 Returned 304 in 1 ms
+ HTTP  10/19/2024 10:28:46 AM 141.143.213.38 GET /static/css/main.9e141168.css
+ HTTP  10/19/2024 10:28:46 AM 141.143.213.38 Returned 304 in 1 ms
+ HTTP  10/19/2024 10:28:46 AM 141.143.213.38 GET /static/js/main.cf18d741.js
+ HTTP  10/19/2024 10:28:46 AM 141.143.213.38 Returned 304 in 1 ms
+ HTTP  10/19/2024 10:28:46 AM 141.143.213.38 GET /static/media/background.dfa6f0fedc47e05094c2.png
+ HTTP  10/19/2024 10:28:46 AM 141.143.213.38 Returned 304 in 1 ms
+ HTTP  10/19/2024 10:28:46 AM 141.143.213.38 GET /favicon.ico
+ HTTP  10/19/2024 10:28:46 AM 141.143.213.38 Returned 304 in 1 ms
+ HTTP  10/19/2024 10:31:01 AM 141.143.213.38 GET /static/js/main.cf18d741.js
+ HTTP  10/19/2024 10:31:01 AM 141.143.213.38 Returned 304 in 1 ms
+ HTTP  10/19/2024 10:31:01 AM 141.143.213.38 GET /static/css/main.9e141168.css
+ HTTP  10/19/2024 10:31:01 AM 141.143.213.38 Returned 304 in 0 ms
+ HTTP  10/19/2024 10:31:01 AM 141.143.213.38 GET /static/media/background.dfa6f0fedc47e05094c2.png
+ HTTP  10/19/2024 10:31:01 AM 141.143.213.38 Returned 304 in 1 ms
+ HTTP  10/19/2024 10:31:01 AM 141.143.213.38 GET /favicon.ico
+ HTTP  10/19/2024 10:31:01 AM 141.143.213.38 Returned 304 in 2 ms
+ HTTP  10/19/2024 10:32:25 AM 141.143.213.38 GET /chat
+ HTTP  10/19/2024 10:32:25 AM 141.143.213.38 Returned 304 in 1 ms
+ HTTP  10/19/2024 10:32:25 AM 141.143.213.38 GET /static/js/main.cf18d741.js
+ HTTP  10/19/2024 10:32:25 AM 141.143.213.38 Returned 304 in 0 ms
+ HTTP  10/19/2024 10:32:25 AM 141.143.213.38 GET /static/css/main.9e141168.css
+ HTTP  10/19/2024 10:32:25 AM 141.143.213.38 Returned 304 in 1 ms
+ HTTP  10/19/2024 10:32:26 AM 141.143.213.38 GET /favicon.ico
+ HTTP  10/19/2024 10:32:26 AM 141.143.213.38 Returned 304 in 1 ms
+ HTTP  10/19/2024 10:34:34 AM 141.143.213.38 GET /chat
+ HTTP  10/19/2024 10:34:34 AM 141.143.213.38 Returned 304 in 1 ms
+ HTTP  10/19/2024 10:34:34 AM 141.143.213.38 GET /static/css/main.9e141168.css
+ HTTP  10/19/2024 10:34:34 AM 141.143.213.38 Returned 304 in 1 ms
+ HTTP  10/19/2024 10:34:34 AM 141.143.213.38 GET /static/js/main.cf18d741.js
+ HTTP  10/19/2024 10:34:34 AM 141.143.213.38 Returned 304 in 1 ms
+ HTTP  10/19/2024 10:34:34 AM 141.143.213.38 GET /static/media/background.dfa6f0fedc47e05094c2.png
+ HTTP  10/19/2024 10:34:34 AM 141.143.213.38 Returned 304 in 0 ms
+ HTTP  10/19/2024 10:34:34 AM 141.143.213.38 GET /favicon.ico
+ HTTP  10/19/2024 10:34:34 AM 141.143.213.38 Returned 304 in 3 ms
+ HTTP  10/19/2024 10:34:35 AM 141.143.213.38 GET /static/css/main.9e141168.css
+ HTTP  10/19/2024 10:34:35 AM 141.143.213.38 Returned 304 in 1 ms
+ HTTP  10/19/2024 10:34:35 AM 141.143.213.38 GET /static/js/main.cf18d741.js.map
+ HTTP  10/19/2024 10:34:35 AM 141.143.213.38 Returned 304 in 1 ms
+ HTTP  10/19/2024 10:34:35 AM 141.143.213.38 GET /static/css/main.9e141168.css.map
+ HTTP  10/19/2024 10:34:35 AM 141.143.213.38 Returned 304 in 1 ms
+ INFO  Accepting connections at http://localhost:3000
+
+ INFO  Gracefully shutting down. Please wait...

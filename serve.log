@@ -1,0 +1,38 @@
+nohup: ignoring input
+ INFO  Accepting connections at http://localhost:3000
+ HTTP  10/21/2024 4:38:52 PM 141.143.213.47 GET /chat
+ HTTP  10/21/2024 4:38:52 PM 141.143.213.47 Returned 304 in 24 ms
+ HTTP  10/21/2024 4:38:53 PM 141.143.213.47 GET /static/js/main.a73f112d.js
+ HTTP  10/21/2024 4:38:53 PM 141.143.213.47 Returned 304 in 3 ms
+ HTTP  10/21/2024 4:38:53 PM 141.143.213.47 GET /static/css/main.a1fca3f6.css
+ HTTP  10/21/2024 4:38:53 PM 141.143.213.47 Returned 304 in 2 ms
+ HTTP  10/21/2024 4:38:53 PM 141.143.213.47 GET /static/media/background.dfa6f0fedc47e05094c2.png
+ HTTP  10/21/2024 4:38:53 PM 141.143.213.47 Returned 304 in 3 ms
+ HTTP  10/21/2024 4:38:53 PM 141.143.213.47 GET /static/js/main.a73f112d.js.map
+ HTTP  10/21/2024 4:38:53 PM 141.143.213.47 Returned 200 in 7 ms
+ HTTP  10/21/2024 4:38:53 PM 127.0.0.1 GET /static/css/main.a1fca3f6.css.map
+ HTTP  10/21/2024 4:38:53 PM 127.0.0.1 Returned 200 in 2 ms
+ HTTP  10/21/2024 4:38:53 PM 141.143.213.47 GET /favicon.ico
+ HTTP  10/21/2024 4:38:53 PM 141.143.213.47 Returned 304 in 1 ms
+ HTTP  10/21/2024 4:38:53 PM 141.143.213.47 GET /static/css/main.a1fca3f6.css.map
+ HTTP  10/21/2024 4:38:53 PM 141.143.213.47 Returned 200 in 3 ms
+ HTTP  10/21/2024 4:38:57 PM 141.143.213.47 GET /static/css/main.a1fca3f6.css
+ HTTP  10/21/2024 4:38:57 PM 141.143.213.47 Returned 304 in 2 ms
+ HTTP  10/21/2024 4:38:57 PM 141.143.213.47 GET /static/js/main.a73f112d.js.map
+ HTTP  10/21/2024 4:38:57 PM 141.143.213.47 Returned 200 in 2 ms
+ HTTP  10/21/2024 4:38:57 PM 141.143.213.47 GET /static/css/main.a1fca3f6.css.map
+ HTTP  10/21/2024 4:38:57 PM 141.143.213.47 Returned 304 in 1 ms
+ HTTP  10/21/2024 4:50:16 PM 141.143.213.47 GET /chat
+ HTTP  10/21/2024 4:50:16 PM 141.143.213.47 Returned 304 in 1 ms
+ HTTP  10/21/2024 4:50:16 PM 141.143.213.47 GET /static/js/main.a73f112d.js
+ HTTP  10/21/2024 4:50:16 PM 141.143.213.47 Returned 304 in 1 ms
+ HTTP  10/21/2024 4:50:16 PM 141.143.213.47 GET /static/css/main.a1fca3f6.css
+ HTTP  10/21/2024 4:50:16 PM 141.143.213.47 Returned 304 in 1 ms
+ HTTP  10/21/2024 4:50:16 PM 141.143.213.47 GET /static/media/background.dfa6f0fedc47e05094c2.png
+ HTTP  10/21/2024 4:50:16 PM 141.143.213.47 Returned 304 in 1 ms
+ HTTP  10/21/2024 4:50:16 PM 141.143.213.47 GET /static/js/main.a73f112d.js.map
+ HTTP  10/21/2024 4:50:16 PM 141.143.213.47 Returned 304 in 0 ms
+ HTTP  10/21/2024 4:50:17 PM 141.143.213.47 GET /static/css/main.a1fca3f6.css.map
+ HTTP  10/21/2024 4:50:17 PM 141.143.213.47 Returned 304 in 1 ms
+ HTTP  10/21/2024 4:50:17 PM 141.143.213.47 GET /favicon.ico
+ HTTP  10/21/2024 4:50:17 PM 141.143.213.47 Returned 304 in 1 ms
