@@ -11,7 +11,7 @@ const hygenApiKey = process.env.REACT_APP_HEYGEN_API_KEY;
 const hygenApiUrl = process.env.REACT_APP_HEYGEN_API_URL;
 const llmApiUrl = process.env.REACT_APP_LLM_API_URL;
 const avatarName = process.env.REACT_APP_HEGYGEN_AVATAR_NAME;
-console.log('hygenApiUrl', hygenApiUrl);
+console.log("hygenApiUrl", hygenApiUrl);
 
 interface SpeechRecognitionEvent extends Event {
   results: SpeechRecognitionResultList;
@@ -78,13 +78,12 @@ const OAvatar: React.FC = () => {
   };
 
   const fetchAccessToken = async (): Promise<string> => {
-    
     const response = await fetch(`${hygenApiUrl}/streaming.create_token`, {
       method: "POST",
       headers: {
         "x-api-key": hygenApiKey || "",
         "Content-Type": "application/json",
-        "accept": "application/json",
+        accept: "application/json",
       },
     });
 

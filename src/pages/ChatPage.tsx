@@ -6,6 +6,7 @@ import { API_ENDPOINTS } from "../config/apiConfig";
 import { marked } from "marked";
 import { createParser } from "eventsource-parser";
 import OAvatar from "../components/OAvatar";
+import { useVideo } from "../context/VideoContext";
 
 function ChatPage() {
   const [messages, setMessages] = useState<any>([]);
@@ -291,6 +292,8 @@ function ChatPage() {
     scrollToBottom();
   }, [messages]);
 
+  const { isVideoEnabled, toggleVideo } = useVideo();
+
   return (
     <>
       <div className="d-flex justify-content-center">
@@ -304,8 +307,13 @@ function ChatPage() {
                   alt="Oracle Logo"
                   className="oracle-logo"
                 />
-                <div>
-                  <i className="fas fa-lg fa-robot" role="button" />
+                <div onClick={toggleVideo}>
+                  <i
+                    className={`fas fa-lg fa-robot ${
+                      isVideoEnabled ? "text-primary" : "text-secondary"
+                    } `}
+                    role="button"
+                  />
                 </div>
               </div>
               <div id="chatBox" ref={chatBoxRef}>
@@ -332,13 +340,15 @@ function ChatPage() {
             </div>
           </div>
         </div>
-        <div className="col-4 chat-page-container">
-          <div className="chat-interface">
-            <div className="container">
-              <OAvatar />
+        {isVideoEnabled && (
+          <div className="col-4 chat-page-container">
+            <div className="chat-interface">
+              <div className="container">
+                <OAvatar />
+              </div>
             </div>
           </div>
-        </div>
+        )}
       </div>
       <div className="d-flex justify-content-center">
         <div className="bottom-section">
