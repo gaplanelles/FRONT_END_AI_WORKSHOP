@@ -14,7 +14,6 @@ body {
 .chat-page-container {
   display: flex;
   flex-direction: column;
-  padding: 20px;
   box-sizing: border-box;
   align-items: center;
 }
@@ -183,9 +182,10 @@ body {
   align-items: start;
   gap: 20px;
   min-height: min-content; /* Adjust height based on content */
-  max-height: 30vh; /* Limit maximum height */
+  max-height: 40vh; /* Limit maximum height */
   width: 80%; /* Set width to 70% of the container */
-  padding: 40px;
+  /* padding-top: 20px; */
+  padding-bottom: 20px;
 }
 
 .sidebar {
@@ -258,4 +258,42 @@ body {
     width: 100%;
     flex: none; /* Remove flex property for mobile layout */
   }
+}
+.slide-container {
+  position: relative;
+  overflow: hidden;
+  min-height: 85vh;
+}
+
+.left-content {
+  position: absolute;
+  padding: 10px 5px 10px 10px;
+  left: 50%;
+  justify-content: end;
+  transform: translateX(-50%);
+  width: 50%;
+  background: #f8f9fa;
+  transition: all 0.5s ease;
+  z-index: 1;
+}
+
+.left-content.slide-left {
+  left: 0;
+  transform: translateX(0);
+}
+
+.hidden-content {
+  position: absolute;
+  padding: 10px 10px 10px 5px;
+  right: -50%;
+  top: 0;
+  width: 50%;
+  height: 100%;
+  justify-content: start;
+  background: #f8f9fa;
+  transition: transform 0.5s ease;
+}
+
+.hidden-content.show-right {
+  transform: translateX(-100%);
 }

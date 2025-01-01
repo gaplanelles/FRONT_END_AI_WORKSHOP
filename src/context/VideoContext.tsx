@@ -12,7 +12,7 @@ interface VideoProviderProps {
 }
 
 export const VideoProvider: React.FC<VideoProviderProps> = ({ children }) => {
-  const [isVideoEnabled, setIsVideoEnabled] = useState(true);
+  const [isVideoEnabled, setIsVideoEnabled] = useState(false);
 
   const toggleVideo = () => {
     setIsVideoEnabled((prev) => !prev);

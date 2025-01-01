@@ -6,6 +6,7 @@ import StreamingAvatar, {
   TaskMode,
   TaskType,
 } from "@heygen/streaming-avatar";
+import LoadingOverlay from "./LoadingOverlay";
 
 const hygenApiKey = process.env.REACT_APP_HEYGEN_API_KEY;
 const hygenApiUrl = process.env.REACT_APP_HEYGEN_API_URL;
@@ -17,7 +18,7 @@ interface SpeechRecognitionEvent extends Event {
   results: SpeechRecognitionResultList;
 }
 
-const OAvatar: React.FC = () => {
+const OAvatar: React.FC<{ isVideoEnabled: boolean }> = ({ isVideoEnabled }) => {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [avatar, setAvatar] = useState<StreamingAvatar | null>(null);
   const [sessionData, setSessionData] = useState<any>(null);
@@ -25,6 +26,15 @@ const OAvatar: React.FC = () => {
   const [userInput, setUserInput] = useState("");
   const [lastReadText, setLastReadText] = useState("");
   const [isSessionActive, setIsSessionActive] = useState(false);
+  const [isLoadingAvatar, setIsLoadingAvatar] = useState(false);
+
+  useEffect(() => {
+    if (isVideoEnabled) {
+      initializeAvatarSession();
+    } else {
+      terminateAvatarSession();
+    }
+  }, [isVideoEnabled]);
 
   // Speech recognition setup
   const setupSpeechRecognition = () => {
@@ -78,35 +88,49 @@ const OAvatar: React.FC = () => {
   };
 
   const fetchAccessToken = async (): Promise<string> => {
-    const response = await fetch(`${hygenApiUrl}/streaming.create_token`, {
-      method: "POST",
-      headers: {
-        "x-api-key": hygenApiKey || "",
-        "Content-Type": "application/json",
-        accept: "application/json",
-      },
-    });
-
-    const { data } = await response.json();
-    return data.token;
+    try {
+      const response = await fetch(`${hygenApiUrl}/streaming.create_token`, {
+        method: "POST",
+        headers: {
+          "x-api-key": hygenApiKey || "",
+          "Content-Type": "application/json",
+          accept: "application/json",
+        },
+      });
+      const { data } = await response.json();
+      return data.token;
+    } catch (e) {
+      setIsLoadingAvatar(false);
+      return "";
+    }
   };
 
   const initializeAvatarSession = async () => {
-    const token = await fetchAccessToken();
-    const newAvatar = new StreamingAvatar({ token });
-    setAvatar(newAvatar);
+    try {
+      setIsLoadingAvatar(true);
+      const token = await fetchAccessToken();
+      const newAvatar = new StreamingAvatar({ token });
+      setAvatar(newAvatar);
 
-    const data = await newAvatar.createStartAvatar({
-      quality: AvatarQuality.High,
-      avatarName: avatarName || "avatar",
-    });
+      const data = await newAvatar.createStartAvatar({
+        quality: AvatarQuality.High,
+        avatarName: avatarName || "avatar",
+      });
 
-    setSessionData(data);
-    setIsSessionActive(true);
-    console.log("Session data:", data);
+      setSessionData(data);
+      setIsSessionActive(true);
+      console.log("Session data:", data);
 
-    newAvatar.on(StreamingEvents.STREAM_READY, handleStreamReady);
-    newAvatar.on(StreamingEvents.STREAM_DISCONNECTED, handleStreamDisconnected);
+      newAvatar.on(StreamingEvents.STREAM_READY, handleStreamReady);
+      newAvatar.on(
+        StreamingEvents.STREAM_DISCONNECTED,
+        handleStreamDisconnected
+      );
+      setIsLoadingAvatar(false);
+    } catch (error) {
+      console.error("Error initializing avatar session:", error);
+      setIsLoadingAvatar(false);
+    }
   };
 
   const handleStreamReady = (event: any) => {
@@ -193,35 +217,37 @@ const OAvatar: React.FC = () => {
   };
 
   return (
-    <div className="avatar-container">
-      <video
-        ref={videoRef}
-        id="avatarVideo"
-        className="avatar-video"
-        controls={true}
-        playsInline
-      />
-      <div className="controls">
-        <button onClick={initializeAvatarSession} disabled={isSessionActive}>
-          Start Session
-        </button>
-        <button onClick={terminateAvatarSession} disabled={!isSessionActive}>
-          End Session
-        </button>
-        <button onClick={toggleAudioCapture}>
-          {isListening ? "Stop Capture Audio" : "Capture Audio"}
-        </button>
-        <div className="input-section">
-          <input
-            type="text"
-            value={userInput}
-            onChange={(e) => setUserInput(e.target.value)}
-            placeholder="Enter text for avatar to speak"
-          />
-          <button onClick={handleSpeak}>Speak</button>
+    <LoadingOverlay isLoading={isLoadingAvatar}>
+      <div className="avatar-container">
+        <video
+          ref={videoRef}
+          id="avatarVideo"
+          className="avatar-video"
+          controls={true}
+          playsInline
+        />
+        <div className="controls">
+          {/* <button onClick={initializeAvatarSession} disabled={isSessionActive}>
+            Start Session
+          </button>
+          <button onClick={terminateAvatarSession} disabled={!isSessionActive}>
+            End Session
+          </button> */}
+          {/* <button onClick={toggleAudioCapture}>
+            {isListening ? "Stop Capture Audio" : "Capture Audio"}
+          </button>
+          <div className="input-section">
+            <input
+              type="text"
+              value={userInput}
+              onChange={(e) => setUserInput(e.target.value)}
+              placeholder="Enter text for avatar to speak"
+            />
+            <button onClick={handleSpeak}>Speak</button>
+          </div> */}
         </div>
       </div>
-    </div>
+    </LoadingOverlay>
   );
 };
 
