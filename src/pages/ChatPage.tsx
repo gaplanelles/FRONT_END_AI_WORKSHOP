@@ -3,16 +3,16 @@ import "../styles/ChatPage.css";
 import RAGConfigDisplay from "../components/RAGConfigDisplay";
 import SourceTabs from "../components/SourceTabs";
 import { API_ENDPOINTS } from "../config/apiConfig";
-import { marked } from "marked";
 import { createParser } from "eventsource-parser";
 import OAvatar from "../components/OAvatar";
 import { useVideo } from "../context/VideoContext";
-import APP_CONFIG from "../config/appConfig";
 import { useTranscription } from "../context/TranscriptionContext";
 
 function ChatPage() {
   const [messages, setMessages] = useState<any>([]);
-  const [inputValue, setInputValue] = useState("");
+  const {transcription, setTranscription} = useTranscription();
+  console.log("transcription", transcription);
+  // const [inputValue, setInputValue] = useState(transcription || "");
   const [configData, setConfigData] = useState(null);
   const [metadata, setMetadata] = useState(null);
   const [error, setError] = useState<string | null>(null);
@@ -228,14 +228,16 @@ function ChatPage() {
   };
 
   const sendMessage = async () => {
-    if (inputValue.trim()) {
-      const newMessage = { type: "user", content: inputValue.trim() };
+    debugger;
+    if (transcription.trim()) {
+      const newMessage = { type: "user", content: transcription.trim() };
       setMessages((prevMessages: any) => [
         ...prevMessages,
         newMessage,
         { type: "system", content: "" },
       ]);
-      setInputValue("");
+      // setInputValue("");
+
       await fetchResponse(newMessage.content);
     }
   };
@@ -295,11 +297,12 @@ function ChatPage() {
   }, [messages]);
 
   const { isVideoEnabled, toggleVideo } = useVideo();
-  const { isTranscriptionEnabled, toggleTranscription } = useTranscription();
+  const { isListening, toggleListening } = useTranscription();
 
   return (
     <>
       <div className="slide-container">
+        {transcription}
         <div
           id="leftContent"
           className={`left-content ${isVideoEnabled ? "slide-left" : ""}`}
@@ -311,10 +314,12 @@ function ChatPage() {
                   <div />
                   <div>AI Chat</div>
                   <div className="d-flex">
-                    <div onClick={toggleTranscription} className="me-3">
+                    <div onClick={toggleListening} className="me-3">
                       <i
                         className={`fas fa-lg fa-microphone ${
-                          isTranscriptionEnabled ? "text-warning" : "text-secondary"
+                          isListening
+                            ? "text-warning"
+                            : "text-secondary"
                         } `}
                         role="button"
                       />
@@ -342,8 +347,9 @@ function ChatPage() {
                     type="text"
                     id="userInput"
                     placeholder="Send a message..."
-                    value={inputValue}
-                    onChange={(e) => setInputValue(e.target.value)}
+                    value={transcription}
+                    // onChange={(e) => setInputValue(e.target.value)}
+                    onChange={(e) => setTranscription(e.target.value)}
                     onKeyPress={(e) => e.key === "Enter" && sendMessage()}
                   />
                   <button id="sendButton" onClick={sendMessage}>
