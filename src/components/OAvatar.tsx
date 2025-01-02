@@ -1,5 +1,5 @@
 import "../styles/OAvatar.css";
-import React, { useEffect, useRef, useState } from "react";
+import React, { use, useEffect, useRef, useState } from "react";
 import StreamingAvatar, {
   AvatarQuality,
   StreamingEvents,
@@ -7,18 +7,19 @@ import StreamingAvatar, {
   TaskType,
 } from "@heygen/streaming-avatar";
 import LoadingOverlay from "./LoadingOverlay";
+import { useTranscription } from "../context/TranscriptionContext";
 
 const hygenApiKey = process.env.REACT_APP_HEYGEN_API_KEY;
 const hygenApiUrl = process.env.REACT_APP_HEYGEN_API_URL;
 const llmApiUrl = process.env.REACT_APP_LLM_API_URL;
 const avatarName = process.env.REACT_APP_HEGYGEN_AVATAR_NAME;
-console.log("hygenApiUrl", hygenApiUrl);
 
 interface SpeechRecognitionEvent extends Event {
   results: SpeechRecognitionResultList;
 }
 
 const OAvatar: React.FC<{ isVideoEnabled: boolean }> = ({ isVideoEnabled }) => {
+  const {startListening, stopListening} = useTranscription();
   const videoRef = useRef<HTMLVideoElement>(null);
   const [avatar, setAvatar] = useState<StreamingAvatar | null>(null);
   const [sessionData, setSessionData] = useState<any>(null);
@@ -35,6 +36,15 @@ const OAvatar: React.FC<{ isVideoEnabled: boolean }> = ({ isVideoEnabled }) => {
       terminateAvatarSession();
     }
   }, [isVideoEnabled]);
+
+  const initAvatarTalking = (newAvatar:StreamingAvatar) => {
+    newAvatar?.on(StreamingEvents.AVATAR_START_TALKING, () => {
+      stopListening();
+    });
+    newAvatar?.on(StreamingEvents.AVATAR_STOP_TALKING, () => {
+      startListening()
+    });
+  };
 
   // Speech recognition setup
   const setupSpeechRecognition = () => {
@@ -111,6 +121,7 @@ const OAvatar: React.FC<{ isVideoEnabled: boolean }> = ({ isVideoEnabled }) => {
       const token = await fetchAccessToken();
       const newAvatar = new StreamingAvatar({ token });
       setAvatar(newAvatar);
+      initAvatarTalking(newAvatar);
 
       const data = await newAvatar.createStartAvatar({
         quality: AvatarQuality.High,

@@ -10,9 +10,7 @@ import { useTranscription } from "../context/TranscriptionContext";
 
 function ChatPage() {
   const [messages, setMessages] = useState<any>([]);
-  const {transcription, setTranscription} = useTranscription();
-  console.log("transcription", transcription);
-  // const [inputValue, setInputValue] = useState(transcription || "");
+  const { transcription, setTranscription } = useTranscription();
   const [configData, setConfigData] = useState(null);
   const [metadata, setMetadata] = useState(null);
   const [error, setError] = useState<string | null>(null);
@@ -228,7 +226,6 @@ function ChatPage() {
   };
 
   const sendMessage = async () => {
-    debugger;
     if (transcription.trim()) {
       const newMessage = { type: "user", content: transcription.trim() };
       setMessages((prevMessages: any) => [
@@ -236,8 +233,7 @@ function ChatPage() {
         newMessage,
         { type: "system", content: "" },
       ]);
-      // setInputValue("");
-
+      setTranscription("");
       await fetchResponse(newMessage.content);
     }
   };
@@ -302,7 +298,6 @@ function ChatPage() {
   return (
     <>
       <div className="slide-container">
-        {transcription}
         <div
           id="leftContent"
           className={`left-content ${isVideoEnabled ? "slide-left" : ""}`}
@@ -317,9 +312,7 @@ function ChatPage() {
                     <div onClick={toggleListening} className="me-3">
                       <i
                         className={`fas fa-lg fa-microphone ${
-                          isListening
-                            ? "text-warning"
-                            : "text-secondary"
+                          isListening ? "text-warning" : "text-secondary"
                         } `}
                         role="button"
                       />
@@ -348,7 +341,6 @@ function ChatPage() {
                     id="userInput"
                     placeholder="Send a message..."
                     value={transcription}
-                    // onChange={(e) => setInputValue(e.target.value)}
                     onChange={(e) => setTranscription(e.target.value)}
                     onKeyPress={(e) => e.key === "Enter" && sendMessage()}
                   />
@@ -397,78 +389,6 @@ function ChatPage() {
           </div>
         </div>
       </div>
-      {/* <div className={`d-flex justify-content-center`}>
-        <div className="chat-page-container col-6">
-          <div className="chat-interface">
-            <div className="container">
-              <div className="mb-3 d-flex">
-                <div />
-                <img
-                  src="https://upload.wikimedia.org/wikipedia/commons/5/50/Oracle_logo.svg"
-                  alt="Oracle Logo"
-                  className="oracle-logo"
-                />
-                <div onClick={toggleVideo}>
-                  <i
-                    className={`fas fa-lg fa-robot ${
-                      isVideoEnabled ? "text-warning" : "text-secondary"
-                    } `}
-                    role="button"
-                  />
-                </div>
-              </div>
-              <div id="chatBox" ref={chatBoxRef}>
-                {messages.map((msg: any, index: number) => (
-                  <div key={index} className={`message ${msg.type}-message`}>
-                    <div dangerouslySetInnerHTML={{ __html: msg.content }} />
-                  </div>
-                ))}
-              </div>
-              <div className="input-area">
-                <input
-                  type="text"
-                  id="userInput"
-                  placeholder="Send a message..."
-                  value={inputValue}
-                  onChange={(e) => setInputValue(e.target.value)}
-                  onKeyPress={(e) => e.key === "Enter" && sendMessage()}
-                />
-                <button id="sendButton" onClick={sendMessage}>
-                  <i className="fas fa-paper-plane"></i>
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-        {isVideoEnabled && (
-          <div className="col-4 chat-page-container">
-            <div className="chat-interface">
-              <div className="container">
-                <OAvatar />
-              </div>
-            </div>
-          </div>
-        )}
-      </div>
-      <div className="d-flex justify-content-center">
-        <div className="bottom-section">
-          <aside className="sidebar">
-            <RAGConfigDisplay
-              configData={configData}
-              metadata={metadata}
-              error={error}
-            />
-          </aside>
-          <div className="sources-display">
-            <div className="sources-header">
-              <h3>Sources</h3>
-            </div>
-            <div className="sources-content">
-              <SourceTabs sources={sources} />
-            </div>
-          </div>
-        </div>
-      </div> */}
     </>
   );
 }
