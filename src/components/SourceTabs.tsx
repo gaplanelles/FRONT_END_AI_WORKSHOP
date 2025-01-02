@@ -13,11 +13,11 @@ interface SourceTabsProps {
 }
 
 const SourceTabs: React.FC<SourceTabsProps> = ({ sources }) => {
-  console.log("SourceTabs received sources:", sources);
+  // console.log("SourceTabs received sources:", sources);
   const [activeTab, setActiveTab] = useState(0);
 
   if (!sources || sources.length === 0) {
-    console.log("No sources available in SourceTabs");
+    // console.log("No sources available in SourceTabs");
     return <div className="no-sources">No sources available</div>;
   }
 

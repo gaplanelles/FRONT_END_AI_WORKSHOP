@@ -9,6 +9,8 @@ interface Window {
     lang: string;
     onresult: (event: SpeechRecognitionEvent) => void;
     onend: () => void;
+    onstart: () => void;
+    error: () => void;
     start: () => void;
     stop: () => void;
   }

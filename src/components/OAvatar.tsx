@@ -1,5 +1,5 @@
 import "../styles/OAvatar.css";
-import React, { use, useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import StreamingAvatar, {
   AvatarQuality,
   StreamingEvents,
@@ -14,17 +14,14 @@ const hygenApiUrl = process.env.REACT_APP_HEYGEN_API_URL;
 const llmApiUrl = process.env.REACT_APP_LLM_API_URL;
 const avatarName = process.env.REACT_APP_HEGYGEN_AVATAR_NAME;
 
-interface SpeechRecognitionEvent extends Event {
-  results: SpeechRecognitionResultList;
-}
-
-const OAvatar: React.FC<{ isVideoEnabled: boolean }> = ({ isVideoEnabled }) => {
-  const {startListening, stopListening} = useTranscription();
+const OAvatar: React.FC<{
+  isVideoEnabled: boolean;
+  isListeningEnabled: boolean;
+}> = ({ isVideoEnabled, isListeningEnabled }) => {
+  const { startListening, stopListening } = useTranscription();
   const videoRef = useRef<HTMLVideoElement>(null);
   const [avatar, setAvatar] = useState<StreamingAvatar | null>(null);
   const [sessionData, setSessionData] = useState<any>(null);
-  const [isListening, setIsListening] = useState(false);
-  const [userInput, setUserInput] = useState("");
   const [lastReadText, setLastReadText] = useState("");
   const [isSessionActive, setIsSessionActive] = useState(false);
   const [isLoadingAvatar, setIsLoadingAvatar] = useState(false);
@@ -37,64 +34,17 @@ const OAvatar: React.FC<{ isVideoEnabled: boolean }> = ({ isVideoEnabled }) => {
     }
   }, [isVideoEnabled]);
 
-  const initAvatarTalking = (newAvatar:StreamingAvatar) => {
+  const initAvatarTalking = (newAvatar: StreamingAvatar) => {
     newAvatar?.on(StreamingEvents.AVATAR_START_TALKING, () => {
-      stopListening();
+      if (isListeningEnabled) {
+        stopListening();
+      }
     });
     newAvatar?.on(StreamingEvents.AVATAR_STOP_TALKING, () => {
-      startListening()
+      if (isListeningEnabled) {
+        startListening();
+      }
     });
-  };
-
-  // Speech recognition setup
-  const setupSpeechRecognition = () => {
-    const SpeechRecognition =
-      (window as any).SpeechRecognition ||
-      (window as any).webkitSpeechRecognition;
-    if (!SpeechRecognition) {
-      console.error("Speech Recognition API is not supported in this browser");
-      return null;
-    }
-
-    const recognition = new SpeechRecognition();
-    recognition.continuous = false;
-    recognition.interimResults = false;
-    recognition.lang = "en-US";
-
-    recognition.onresult = async (event: SpeechRecognitionEvent) => {
-      const capturedText = event.results[0][0].transcript;
-      console.log("Captured text:", capturedText);
-
-      const payload = {
-        conversation: [],
-        genModel: "OCI_CommandRplus",
-        message: capturedText,
-      };
-
-      try {
-        await fetch(`${llmApiUrl}/ask`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(payload),
-        });
-      } catch (error) {
-        console.error("Error calling /ask:", error);
-      }
-
-      if (isListening) {
-        setTimeout(() => {
-          recognition.start();
-        }, 3000);
-      }
-    };
-
-    recognition.onerror = (event: any) => {
-      console.error("Speech recognition error:", event.error);
-    };
-
-    return recognition;
   };
 
   const fetchAccessToken = async (): Promise<string> => {
@@ -130,7 +80,6 @@ const OAvatar: React.FC<{ isVideoEnabled: boolean }> = ({ isVideoEnabled }) => {
 
       setSessionData(data);
       setIsSessionActive(true);
-      console.log("Session data:", data);
 
       newAvatar.on(StreamingEvents.STREAM_READY, handleStreamReady);
       newAvatar.on(
@@ -161,23 +110,13 @@ const OAvatar: React.FC<{ isVideoEnabled: boolean }> = ({ isVideoEnabled }) => {
   };
 
   const terminateAvatarSession = async () => {
-    if (avatar && sessionData) {
+    if (avatar && sessionData && isSessionActive) {
       await avatar.stopAvatar();
       if (videoRef.current) {
         videoRef.current.srcObject = null;
       }
       setAvatar(null);
       setIsSessionActive(false);
-    }
-  };
-
-  const handleSpeak = async () => {
-    if (avatar && userInput) {
-      await avatar.speak({
-        text: userInput,
-        task_type: TaskType.REPEAT,
-      });
-      setUserInput("");
     }
   };
 
@@ -194,7 +133,6 @@ const OAvatar: React.FC<{ isVideoEnabled: boolean }> = ({ isVideoEnabled }) => {
           task_type: TaskType.REPEAT,
           taskMode: TaskMode.SYNC,
         });
-        console.log("Text Captured");
       }
     } catch (error) {
       console.error("Error fetching text:", error);
@@ -214,19 +152,6 @@ const OAvatar: React.FC<{ isVideoEnabled: boolean }> = ({ isVideoEnabled }) => {
     };
   }, [isSessionActive, avatar, lastReadText]);
 
-  const toggleAudioCapture = () => {
-    const recognition = setupSpeechRecognition();
-    if (!recognition) return;
-
-    if (isListening) {
-      recognition.stop();
-      setIsListening(false);
-    } else {
-      recognition.start();
-      setIsListening(true);
-    }
-  };
-
   return (
     <LoadingOverlay isLoading={isLoadingAvatar}>
       <div className="avatar-container">
@@ -238,24 +163,17 @@ const OAvatar: React.FC<{ isVideoEnabled: boolean }> = ({ isVideoEnabled }) => {
           playsInline
         />
         <div className="controls">
-          {/* <button onClick={initializeAvatarSession} disabled={isSessionActive}>
-            Start Session
+          <button
+            onClick={() => {
+              try {
+                avatar?.interrupt();
+              } catch (e) {
+                console.error("Error interrupting avatar:", e);
+              }
+            }}
+          >
+            Interrupt
           </button>
-          <button onClick={terminateAvatarSession} disabled={!isSessionActive}>
-            End Session
-          </button> */}
-          {/* <button onClick={toggleAudioCapture}>
-            {isListening ? "Stop Capture Audio" : "Capture Audio"}
-          </button>
-          <div className="input-section">
-            <input
-              type="text"
-              value={userInput}
-              onChange={(e) => setUserInput(e.target.value)}
-              placeholder="Enter text for avatar to speak"
-            />
-            <button onClick={handleSpeak}>Speak</button>
-          </div> */}
         </div>
       </div>
     </LoadingOverlay>

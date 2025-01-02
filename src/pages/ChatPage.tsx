@@ -37,10 +37,6 @@ function ChatPage() {
       if (!response.ok) {
         throw new Error("Failed to clean conversation");
       }
-
-      console.log(
-        `${new Date().toISOString()} - Conversation cleaned successfully`
-      );
     } catch (error) {
       console.error(
         `${new Date().toISOString()} - Error cleaning conversation:`,
@@ -293,7 +289,24 @@ function ChatPage() {
   }, [messages]);
 
   const { isVideoEnabled, toggleVideo } = useVideo();
-  const { isListening, toggleListening } = useTranscription();
+  const {
+    isListening,
+    toggleListening,
+    startListening,
+    stopListening,
+    isListeningEnabled,
+    setIsListeningEnabled,
+    setIsListening,
+  } = useTranscription();
+
+  const toggleListeningEnabled = () => {
+    setIsListeningEnabled(!isListeningEnabled);
+    if (isListeningEnabled) {
+      stopListening();
+    } else {
+      startListening();
+    }
+  };
 
   return (
     <>
@@ -303,16 +316,27 @@ function ChatPage() {
           className={`left-content ${isVideoEnabled ? "slide-left" : ""}`}
         >
           <div className="chat-page-container pe-0">
+            isListening: {JSON.stringify(isListening)}
+            <br />
+            isListeningEnabled: {JSON.stringify(isListeningEnabled)}
             <div className="chat-interface">
               <div className="container">
                 <div className="mb-3 d-flex justify-content-between">
                   <div />
                   <div>AI Chat</div>
                   <div className="d-flex">
-                    <div onClick={toggleListening} className="me-3">
+                    <div
+                      onClick={() => {
+                        toggleListening();
+                        toggleListeningEnabled();
+                      }}
+                      className="me-3"
+                    >
                       <i
                         className={`fas fa-lg fa-microphone ${
-                          isListening ? "text-warning" : "text-secondary"
+                          isListening && isListeningEnabled
+                            ? "text-warning"
+                            : "text-secondary"
                         } `}
                         role="button"
                       />
@@ -364,7 +388,10 @@ function ChatPage() {
                   <div>Marry - Your Virtual Assistant</div>
                   <div />
                 </div>
-                <OAvatar isVideoEnabled={isVideoEnabled} />
+                <OAvatar
+                  isVideoEnabled={isVideoEnabled}
+                  isListeningEnabled={isListeningEnabled}
+                />
               </div>
             </div>
           </div>

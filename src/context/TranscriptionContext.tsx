@@ -13,10 +13,13 @@ interface TranscriptionContextType {
   isListening: boolean;
   startListening: () => void;
   stopListening: () => void;
-  restartListening: () => void;
+  // restartListening: () => void;
+  setIsListening: (isListening: boolean) => void;
   toggleListening: () => void;
   selectedLanguage: string;
   setSelectedLanguage: (language: string) => void;
+  isListeningEnabled: boolean;
+  setIsListeningEnabled: (isListeningEnabled: boolean) => void;
 }
 
 const TranscriptionContext = createContext<
@@ -28,11 +31,11 @@ export const TranscriptionProvider: React.FC<{ children: ReactNode }> = ({
 }) => {
   const [transcription, setTranscription] = useState("");
   const [isListening, setIsListening] = useState(false);
+  const [isListeningEnabled, setIsListeningEnabled] = useState(false);
   const [selectedLanguage, setSelectedLanguage] = useState("");
   const recognitionRef = useRef<SpeechRecognition | null>(null);
 
   const startListening = useCallback(() => {
-    setIsListening(true);
     setTranscription("");
     if ("webkitSpeechRecognition" in window) {
       const SpeechRecognition = window.webkitSpeechRecognition;
@@ -45,7 +48,9 @@ export const TranscriptionProvider: React.FC<{ children: ReactNode }> = ({
         if (selectedLanguage) {
           recognitionRef.current.lang = selectedLanguage;
         }
+        recognitionRef?.current?.start();
 
+        // handle the result of the speech recognition
         recognitionRef.current.onresult = (event: SpeechRecognitionEvent) => {
           let currentTranscript = "";
           for (let i = 0; i < event.results.length; i++) {
@@ -54,35 +59,33 @@ export const TranscriptionProvider: React.FC<{ children: ReactNode }> = ({
           setTranscription(currentTranscript);
         };
 
-        recognitionRef.current.onend = () => {
-          if (isListening) {
-            recognitionRef.current?.start();
-          } else {
-            setIsListening(false);
-          }
+        recognitionRef.current.onstart = () => {
+          setIsListening(true);
         };
 
-        recognitionRef.current.start();
+        recognitionRef.current.onend = () => {
+          setIsListening(false);
+          debugger;
+        };
+
       }
     }
   }, [selectedLanguage, isListening]);
 
   const stopListening = useCallback(() => {
-    setIsListening(false);
     if (recognitionRef.current) {
       recognitionRef.current.stop();
     }
   }, []);
 
-  const restartListening = useCallback(async () => {
-    if (recognitionRef.current) {
-      recognitionRef.current.stop();
-      await new Promise((resolve) => setTimeout(resolve, 200));
-      setTranscription("");
-      recognitionRef.current.start();
-      setIsListening(true);
-    }
-  }, []);
+  // const restartListening = useCallback(async () => {
+  //   if (recognitionRef.current) {
+  //     recognitionRef.current.stop();
+  //     await new Promise((resolve) => setTimeout(resolve, 200));
+  //     setTranscription("");
+  //     recognitionRef.current.start();
+  //   }
+  // }, []);
 
   const toggleListening = () => {
     if (isListening) {
@@ -100,10 +103,13 @@ export const TranscriptionProvider: React.FC<{ children: ReactNode }> = ({
         isListening,
         startListening,
         stopListening,
-        restartListening,
+        // restartListening,
         toggleListening,
+        setIsListening,
         selectedLanguage,
         setSelectedLanguage,
+        isListeningEnabled,
+        setIsListeningEnabled,
       }}
     >
       {children}

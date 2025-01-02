@@ -56,7 +56,7 @@ export const heygenApi = {
       return await response.json();
     } catch (error) {
       console.error("Error starting stream:", error);
-      throw error;
+      // throw error;
     }
   },
 
@@ -75,7 +75,7 @@ export const heygenApi = {
       return await response.json();
     } catch (error) {
       console.error("Error stopping stream:", error);
-      throw error;
+      // throw error;
     }
   },
 
