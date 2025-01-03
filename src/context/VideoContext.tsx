@@ -1,3 +1,4 @@
+import StreamingAvatar from '@heygen/streaming-avatar';
 import React, { createContext, useContext, useState } from 'react';
 
 interface VideoContextProps {
@@ -5,6 +6,8 @@ interface VideoContextProps {
   isVideoActive: boolean;
   toggleVideo: () => void;
   setIsVideoActive: (flag: boolean) => void;
+  avatar: StreamingAvatar | null;
+  setAvatar: (avatar: StreamingAvatar | null) => void;
 }
 
 const VideoContext = createContext<VideoContextProps | undefined>(undefined);
@@ -14,6 +17,7 @@ interface VideoProviderProps {
 }
 
 export const VideoProvider: React.FC<VideoProviderProps> = ({ children }) => {
+  const [avatar, setAvatar] = useState<StreamingAvatar | null>(null);
   const [isVideoEnabled, setIsVideoEnabled] = useState(false);
   const [isVideoActive, setIsVideoActive] = useState(false);
 
@@ -22,7 +26,7 @@ export const VideoProvider: React.FC<VideoProviderProps> = ({ children }) => {
   };
 
   return (
-    <VideoContext.Provider value={{ isVideoEnabled, toggleVideo, isVideoActive, setIsVideoActive }}>
+    <VideoContext.Provider value={{ avatar, setAvatar, isVideoEnabled, toggleVideo, isVideoActive, setIsVideoActive }}>
       {children}
     </VideoContext.Provider>
   );

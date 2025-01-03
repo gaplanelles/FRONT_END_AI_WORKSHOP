@@ -14,6 +14,7 @@ import {
   fetchInitialResponse,
   fetchResponse,
 } from "../services/chatService";
+import { TaskMode, TaskType } from "@heygen/streaming-avatar";
 
 export const isListeningButtonEnabled = signal(false);
 export const isTalkingActive = signal(false);
@@ -21,6 +22,7 @@ export const isTalkingActive = signal(false);
 function ChatPage() {
   const [messages, setMessages] = useState<any>([]);
   const { transcription, setTranscription } = useTranscription();
+  const [isLoadingAnswer, setIsLoadingAnswer] = useState(false);
   const [configData, setConfigData] = useState(null);
   const [metadata, setMetadata] = useState(null);
   const [error, setError] = useState<string | null>(null);
@@ -62,6 +64,7 @@ function ChatPage() {
   const handleStreamResponse = async (response: any) => {
     const parser = createParser(onParse);
     const reader = response.body.getReader();
+    setIsLoadingAnswer(true);
     try {
       while (true) {
         const { done, value } = await reader.read();
@@ -80,6 +83,7 @@ function ChatPage() {
           prevContent + "\nError: Failed to read the response stream."
       );
     }
+    setIsLoadingAnswer(false);
   };
 
   const onParse = (event: any) => {
@@ -198,12 +202,22 @@ function ChatPage() {
     scrollToBottom();
   }, [messages]);
 
-  const { isVideoEnabled, toggleVideo, isVideoActive, setIsVideoActive } =
-    useVideo();
+  const {
+    isVideoEnabled,
+    toggleVideo,
+    isVideoActive,
+    avatar,
+    setIsVideoActive,
+  } = useVideo();
   const { startListening, stopListening, setIsListening } = useTranscription();
 
+  useEffect(() => {
+    if (!isVideoEnabled) {
+      setIsVideoActive(false);
+    }
+  }, [isVideoEnabled]);
+
   const toggleListeningEnabled = () => {
-    debugger;
     if (isListeningButtonEnabled.value) {
       isListeningButtonEnabled.value = false;
       setIsListening(false);
@@ -215,6 +229,17 @@ function ChatPage() {
     }
   };
 
+  async function speakingByAvatar(content: any) {
+    if (avatar) {
+      await avatar.speak({
+        text: content,
+        task_type: TaskType.REPEAT,
+        taskMode: TaskMode.SYNC,
+      });
+    } else {
+      console.warn("Avatar is not available to speak.");
+    }
+  }
   return (
     <>
       <div className="slide-container">
@@ -234,7 +259,13 @@ function ChatPage() {
                   <div>AI Chat</div>
                   <div className="d-flex">
                     {isVideoActive && (
-                      <div className="me-3">
+                      <div
+                        className="me-3"
+                        onClick={() => {
+                          setIsVideoActive(false);
+                          avatar?.interrupt();
+                        }}
+                      >
                         <i
                           className={`fas fa-lg fa-circle-stop text-warning`}
                           role="button"
@@ -242,7 +273,10 @@ function ChatPage() {
                       </div>
                     )}
                     <div
-                      onClick={() => {
+                      onClick={async () => {
+                        if (isVideoEnabled) {
+                          avatar?.interrupt();
+                        }
                         toggleVideo();
                       }}
                     >
@@ -260,6 +294,17 @@ function ChatPage() {
                     <div key={index} className={`message ${msg.type}-message`}>
                       {/* <div dangerouslySetInnerHTML={{ __html: marked(msg.content) }} /> */}
                       <div dangerouslySetInnerHTML={{ __html: msg.content }} />
+                      {msg?.type === "system" && isVideoEnabled && avatar && !!msg?.content?.length && (
+                        <div
+                          className="text-end"
+                          role="button"
+                          onClick={() => {
+                            speakingByAvatar(msg.content);
+                          }}
+                        >
+                          <i className="fas fa-play text-secondary text-right" />
+                        </div>
+                      )}
                     </div>
                   ))}
                 </div>
@@ -267,6 +312,7 @@ function ChatPage() {
                   <input
                     type="text"
                     id="userInput"
+                    disabled={isLoadingAnswer}
                     placeholder="Send a message..."
                     value={transcription}
                     onChange={(e) => setTranscription(e.target.value)}
@@ -276,16 +322,12 @@ function ChatPage() {
                   <button
                     id="sendButton"
                     className="me-4"
+                    disabled={isLoadingAnswer}
                     onClick={sendMessage}
                   >
                     <i className="fas fa-paper-plane"></i>
                   </button>
-                  <div
-                    className="ms-2"
-                    onClick={() => {
-                      toggleListeningEnabled();
-                    }}
-                  >
+                  <div className="ms-2" onClick={toggleListeningEnabled}>
                     <i
                       className={`fas fa-lg fa-microphone ${
                         isListeningButtonEnabled.value

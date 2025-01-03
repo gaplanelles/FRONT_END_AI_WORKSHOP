@@ -20,13 +20,13 @@ const OAvatar: React.FC<{
   isVideoEnabled: boolean;
 }> = ({ isVideoEnabled }) => {
   const videoRef = useRef<HTMLVideoElement>(null);
-  const [avatar, setAvatar] = useState<StreamingAvatar | null>(null);
+  // const [avatar, setAvatar] = useState<StreamingAvatar | null>(null);
   const [sessionData, setSessionData] = useState<any>(null);
   const [lastReadText, setLastReadText] = useState("");
   const [isSessionActive, setIsSessionActive] = useState(false);
   const [isLoadingAvatar, setIsLoadingAvatar] = useState(false);
   const { stopListening, restartListening } = useTranscription();
-  const {isVideoActive, setIsVideoActive} = useVideo();
+  const { avatar, setAvatar, setIsVideoActive } = useVideo();
 
   useEffect(() => {
     if (isVideoEnabled) {
@@ -38,8 +38,6 @@ const OAvatar: React.FC<{
 
   useEffect(() => {
     console.log("isListeningEnabled", isListeningButtonEnabled.value);
-    avatar?.off(StreamingEvents.AVATAR_START_TALKING, () => {});
-    avatar?.off(StreamingEvents.AVATAR_STOP_TALKING, () => {});
     avatar?.on(StreamingEvents.AVATAR_START_TALKING, () => {
       setIsVideoActive(true);
       console.log(
@@ -52,7 +50,6 @@ const OAvatar: React.FC<{
     });
     avatar?.on(StreamingEvents.AVATAR_STOP_TALKING, () => {
       setIsVideoActive(false);
-      debugger;
       console.log(
         "StreamingEvents.AVATAR_STOP_TALKING",
         isListeningButtonEnabled.value
@@ -177,19 +174,6 @@ const OAvatar: React.FC<{
           controls={true}
           playsInline
         />
-        <div className="controls">
-          <button
-            onClick={() => {
-              try {
-                avatar?.interrupt();
-              } catch (e) {
-                console.error("Error interrupting avatar:", e);
-              }
-            }}
-          >
-            Interrupt
-          </button>
-        </div>
       </div>
     </LoadingOverlay>
   );
