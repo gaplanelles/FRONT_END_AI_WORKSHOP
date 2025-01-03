@@ -23,7 +23,7 @@ export const cleanConversation = async () => {
     }
   } catch (error) {
     console.error(`${new Date().toISOString()} - Error cleaning conversation:`, error);
-    throw error;
+    // throw error;
   }
 };
 
@@ -120,6 +120,6 @@ export const handleStreamResponse = async (response: any, onParse: any) => {
     }
   } catch (error) {
     console.error(`${new Date().toISOString()} - Error reading stream:`, error);
-    throw error;
+    // throw error;
   }
 };

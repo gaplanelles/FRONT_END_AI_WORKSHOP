@@ -35,7 +35,7 @@ export const heygenApi = {
       return await response.json();
     } catch (error) {
       console.error("Error creating avatar:", error);
-      throw error;
+      // throw error;
     }
   },
 

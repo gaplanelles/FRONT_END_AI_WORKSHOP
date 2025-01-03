@@ -164,6 +164,16 @@ const OAvatar: React.FC<{
     };
   }, [isSessionActive, avatar, lastReadText]);
 
+  useEffect(() => {
+    return () => {
+      if (avatar) {
+        avatar.stopAvatar();
+        setAvatar(null);
+        setIsSessionActive(false);
+      }
+    };
+  }, [avatar]);
+  
   return (
     <LoadingOverlay isLoading={isLoadingAvatar}>
       <div className="avatar-container">

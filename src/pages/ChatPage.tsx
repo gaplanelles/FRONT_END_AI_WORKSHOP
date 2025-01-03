@@ -263,7 +263,9 @@ function ChatPage() {
                         className="me-3"
                         onClick={() => {
                           setIsVideoActive(false);
-                          avatar?.interrupt();
+                          if (avatar?.mediaStream) {
+                            avatar?.interrupt();
+                          }
                         }}
                       >
                         <i
@@ -274,7 +276,8 @@ function ChatPage() {
                     )}
                     <div
                       onClick={async () => {
-                        if (isVideoEnabled) {
+                        debugger;
+                        if (isVideoEnabled && avatar?.mediaStream) {
                           avatar?.interrupt();
                         }
                         toggleVideo();
@@ -294,17 +297,20 @@ function ChatPage() {
                     <div key={index} className={`message ${msg.type}-message`}>
                       {/* <div dangerouslySetInnerHTML={{ __html: marked(msg.content) }} /> */}
                       <div dangerouslySetInnerHTML={{ __html: msg.content }} />
-                      {msg?.type === "system" && isVideoEnabled && avatar && !!msg?.content?.length && (
-                        <div
-                          className="text-end"
-                          role="button"
-                          onClick={() => {
-                            speakingByAvatar(msg.content);
-                          }}
-                        >
-                          <i className="fas fa-play text-secondary text-right" />
-                        </div>
-                      )}
+                      {msg?.type === "system" &&
+                        isVideoEnabled &&
+                        avatar &&
+                        !!msg?.content?.length && (
+                          <div
+                            className="text-end"
+                            role="button"
+                            onClick={() => {
+                              speakingByAvatar(msg.content);
+                            }}
+                          >
+                            <i className="fas fa-play text-secondary text-right" />
+                          </div>
+                        )}
                     </div>
                   ))}
                 </div>
