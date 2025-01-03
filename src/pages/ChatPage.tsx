@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
+import { signal } from "@preact/signals-react";
 import "../styles/ChatPage.css";
 import RAGConfigDisplay from "../components/RAGConfigDisplay";
 import SourceTabs from "../components/SourceTabs";
@@ -7,6 +8,14 @@ import { createParser } from "eventsource-parser";
 import OAvatar from "../components/OAvatar";
 import { useVideo } from "../context/VideoContext";
 import { useTranscription } from "../context/TranscriptionContext";
+import {
+  cleanConversation,
+  fetchData,
+  fetchInitialResponse,
+  fetchResponse,
+} from "../services/chatService";
+
+export const isListeningButtonEnabled = signal(false);
 
 function ChatPage() {
   const [messages, setMessages] = useState<any>([]);
@@ -25,27 +34,6 @@ function ChatPage() {
   // Minimum delay between tokens in milliseconds
   const MIN_DELAY = 30; // Adjust as needed
 
-  const cleanConversation = async () => {
-    try {
-      const response = await fetch(API_ENDPOINTS.CLEAN_CONVERSATION, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-
-      if (!response.ok) {
-        throw new Error("Failed to clean conversation");
-      }
-    } catch (error) {
-      console.error(
-        `${new Date().toISOString()} - Error cleaning conversation:`,
-        error
-      );
-      throw error;
-    }
-  };
-
   useEffect(() => {
     if (dataFetchedRef.current) return;
     dataFetchedRef.current = true;
@@ -57,64 +45,22 @@ function ChatPage() {
           fetchData(API_ENDPOINTS.SETUP_RAG_TEMPLATE),
         ]);
 
-        console.log("Fetched RAG Config:", config);
-        console.log("Fetched RAG Template:", template);
+        // console.log("Fetched RAG Config:", config);
+        // console.log("Fetched RAG Template:", template);
 
         setConfigData(config);
         setMetadata(template.metadata);
 
         // Clean conversation before initializing
         await cleanConversation();
-        await fetchInitialResponse();
+        await fetchInitialResponse(setMessages, handleStreamResponse);
       } catch (error) {
         console.error("Error fetching data:", error);
         setError("Failed to fetch data.");
       }
     };
-
     fetchAllData();
   }, []);
-
-  const fetchData = async (url: any) => {
-    const response = await fetch(url);
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-    return await response.json();
-  };
-
-  const fetchInitialResponse = async () => {
-    const url = API_ENDPOINTS.INIT;
-    const data = {
-      message: "how are you?",
-      genModel: "OCI_CommandRplus",
-      conversation: [],
-    };
-
-    console.log(
-      `${new Date().toISOString()} - Sending initial request to:`,
-      url
-    );
-
-    setMessages([{ type: "system", content: "" }]);
-
-    try {
-      const response = await fetch(url, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(data),
-      });
-
-      await handleStreamResponse(response);
-    } catch (error) {
-      console.error(`${new Date().toISOString()} - Fetch error:`, error);
-      updateLastMessage(
-        "Error: Failed to get initial response from the server."
-      );
-    }
-  };
 
   const handleStreamResponse = async (response: any) => {
     const parser = createParser(onParse);
@@ -124,7 +70,7 @@ function ChatPage() {
         const { done, value } = await reader.read();
         if (done) break;
         const chunk = new TextDecoder().decode(value);
-        console.log(`${new Date().toISOString()} - Received chunk:`, chunk);
+        // console.log(`${new Date().toISOString()} - Received chunk:`, chunk);
         parser.feed(chunk);
       }
     } catch (error) {
@@ -171,7 +117,7 @@ function ChatPage() {
 
   const handleDoneMessage = (data: any) => {
     if (data.sources && Array.isArray(data.sources)) {
-      console.log("Sources received:", data.sources);
+      // console.log("Sources received:", data.sources);
       setSources(data.sources);
     } else {
       console.log("No sources received or invalid format");
@@ -190,7 +136,7 @@ function ChatPage() {
 
       const nextToken = tokenQueueRef.current.shift();
       updateLastMessage((prevContent: any) => prevContent + nextToken);
-      console.log(`${new Date().toISOString()} - Appended content:`, nextToken);
+      // console.log(`${new Date().toISOString()} - Appended content:`, nextToken);
 
       setTimeout(processNext, MIN_DELAY);
     };
@@ -230,46 +176,13 @@ function ChatPage() {
         { type: "system", content: "" },
       ]);
       setTranscription("");
-      await fetchResponse(newMessage.content);
+      await fetchResponse(
+        newMessage.content,
+        messages,
+        setMessages,
+        handleStreamResponse
+      );
     }
-  };
-
-  const fetchResponse = async (message: any) => {
-    const url = API_ENDPOINTS.ASK;
-    const conversationHistory = formatConversationHistory(messages);
-
-    const data = {
-      message: message,
-      genModel: "OCI_CommandRplus",
-      conversation: conversationHistory,
-    };
-
-    console.log(`${new Date().toISOString()} - Sending request to:`, url);
-    console.log("Conversation history:", conversationHistory);
-
-    try {
-      const response = await fetch(url, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(data),
-      });
-
-      await handleStreamResponse(response);
-    } catch (error) {
-      console.error(`${new Date().toISOString()} - Fetch error:`, error);
-      updateLastMessage("Error: Failed to get response from the server.");
-    }
-  };
-
-  const formatConversationHistory = (messages: any) => {
-    return messages
-      .filter((msg: any) => msg.content.trim() !== "")
-      .map((msg: any) => ({
-        role: msg.type === "user" ? "User" : "Assistant",
-        content: msg.content,
-      }));
   };
 
   useEffect(() => {
@@ -291,19 +204,20 @@ function ChatPage() {
   const { isVideoEnabled, toggleVideo } = useVideo();
   const {
     isListening,
-    toggleListening,
     startListening,
     stopListening,
-    isListeningEnabled,
-    setIsListeningEnabled,
     setIsListening,
   } = useTranscription();
 
   const toggleListeningEnabled = () => {
-    setIsListeningEnabled(!isListeningEnabled);
-    if (isListeningEnabled) {
+    debugger;
+    if (isListeningButtonEnabled.value) {
+      isListeningButtonEnabled.value = false;
+      setIsListening(false);
       stopListening();
     } else {
+      isListeningButtonEnabled.value = true;
+      setIsListening(true);
       startListening();
     }
   };
@@ -318,7 +232,8 @@ function ChatPage() {
           <div className="chat-page-container pe-0">
             isListening: {JSON.stringify(isListening)}
             <br />
-            isListeningEnabled: {JSON.stringify(isListeningEnabled)}
+            isListeningButtonEnabled.value: {JSON.stringify(isListeningButtonEnabled.value)}
+            <br />
             <div className="chat-interface">
               <div className="container">
                 <div className="mb-3 d-flex justify-content-between">
@@ -327,21 +242,24 @@ function ChatPage() {
                   <div className="d-flex">
                     <div
                       onClick={() => {
-                        toggleListening();
                         toggleListeningEnabled();
                       }}
                       className="me-3"
                     >
                       <i
                         className={`fas fa-lg fa-microphone ${
-                          isListening && isListeningEnabled
+                          isListeningButtonEnabled.value
                             ? "text-warning"
                             : "text-secondary"
                         } `}
                         role="button"
                       />
                     </div>
-                    <div onClick={toggleVideo}>
+                    <div
+                      onClick={() => {
+                        toggleVideo();
+                      }}
+                    >
                       <i
                         className={`fas fa-lg fa-robot ${
                           isVideoEnabled ? "text-warning" : "text-secondary"
@@ -390,7 +308,6 @@ function ChatPage() {
                 </div>
                 <OAvatar
                   isVideoEnabled={isVideoEnabled}
-                  isListeningEnabled={isListeningEnabled}
                 />
               </div>
             </div>
@@ -407,8 +324,8 @@ function ChatPage() {
             />
           </aside>
           <div className="sources-display">
-            <div className="sources-header">
-              <h3>Sources</h3>
+            <div className="sources-header pb-2">
+              <h3 className="mb-1">Sources</h3>
             </div>
             <div className="sources-content">
               <SourceTabs sources={sources} />

@@ -13,13 +13,11 @@ interface TranscriptionContextType {
   isListening: boolean;
   startListening: () => void;
   stopListening: () => void;
-  // restartListening: () => void;
+  restartListening: () => void;
   setIsListening: (isListening: boolean) => void;
   toggleListening: () => void;
   selectedLanguage: string;
   setSelectedLanguage: (language: string) => void;
-  isListeningEnabled: boolean;
-  setIsListeningEnabled: (isListeningEnabled: boolean) => void;
 }
 
 const TranscriptionContext = createContext<
@@ -31,7 +29,6 @@ export const TranscriptionProvider: React.FC<{ children: ReactNode }> = ({
 }) => {
   const [transcription, setTranscription] = useState("");
   const [isListening, setIsListening] = useState(false);
-  const [isListeningEnabled, setIsListeningEnabled] = useState(false);
   const [selectedLanguage, setSelectedLanguage] = useState("");
   const recognitionRef = useRef<SpeechRecognition | null>(null);
 
@@ -65,9 +62,7 @@ export const TranscriptionProvider: React.FC<{ children: ReactNode }> = ({
 
         recognitionRef.current.onend = () => {
           setIsListening(false);
-          debugger;
         };
-
       }
     }
   }, [selectedLanguage, isListening]);
@@ -75,17 +70,18 @@ export const TranscriptionProvider: React.FC<{ children: ReactNode }> = ({
   const stopListening = useCallback(() => {
     if (recognitionRef.current) {
       recognitionRef.current.stop();
+      setIsListening(false);
     }
   }, []);
 
-  // const restartListening = useCallback(async () => {
-  //   if (recognitionRef.current) {
-  //     recognitionRef.current.stop();
-  //     await new Promise((resolve) => setTimeout(resolve, 200));
-  //     setTranscription("");
-  //     recognitionRef.current.start();
-  //   }
-  // }, []);
+  const restartListening = useCallback(async () => {
+    if (recognitionRef.current) {
+      recognitionRef.current.stop();
+      await new Promise((resolve) => setTimeout(resolve, 200));
+      setTranscription("");
+      recognitionRef.current.start();
+    }
+  }, []);
 
   const toggleListening = () => {
     if (isListening) {
@@ -103,13 +99,11 @@ export const TranscriptionProvider: React.FC<{ children: ReactNode }> = ({
         isListening,
         startListening,
         stopListening,
-        // restartListening,
+        restartListening,
         toggleListening,
         setIsListening,
         selectedLanguage,
-        setSelectedLanguage,
-        isListeningEnabled,
-        setIsListeningEnabled,
+        setSelectedLanguage
       }}
     >
       {children}

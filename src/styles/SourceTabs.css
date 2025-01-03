@@ -51,6 +51,7 @@
 }
 
 .sources-display {
+  height: 638px;
   flex: 0 0 70%;
   display: flex;
   flex-direction: column;
@@ -68,6 +69,6 @@
 
 /* Ensure content inside sidebar and sources-display takes full height */
 .sidebar > *, .sources-display > * {
-  flex: 1;
+  /* flex: 1; */
   overflow-y: auto;
 }

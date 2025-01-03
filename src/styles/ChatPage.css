@@ -212,7 +212,8 @@ body {
 }
 
 .sources-header {
-  flex: 0 0 auto; /* Don't grow, don't shrink, size to content */
+  /* flex: 0 0 auto;  */
+  /* margin-top: 40px; */
   margin-bottom: 10px;
 }
 
@@ -224,7 +225,7 @@ body {
 }
 
 .sources-content {
-  flex: 1 1 auto; 
+  /* flex: 1 1 auto;  */
   overflow-y: auto;
   padding: 0;
   display: flex;
@@ -237,8 +238,8 @@ body {
 }
 
 .sidebar > *, .sources-display > * {
-  flex: 1;
-  overflow-y: auto;
+  /* flex: 1; */
+  /* overflow-y: auto; */
 }
 
 

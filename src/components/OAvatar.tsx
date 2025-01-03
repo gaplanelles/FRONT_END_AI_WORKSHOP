@@ -8,6 +8,7 @@ import StreamingAvatar, {
 } from "@heygen/streaming-avatar";
 import LoadingOverlay from "./LoadingOverlay";
 import { useTranscription } from "../context/TranscriptionContext";
+import { isListeningButtonEnabled } from "../pages/ChatPage";
 
 const hygenApiKey = process.env.REACT_APP_HEYGEN_API_KEY;
 const hygenApiUrl = process.env.REACT_APP_HEYGEN_API_URL;
@@ -16,15 +17,14 @@ const avatarName = process.env.REACT_APP_HEGYGEN_AVATAR_NAME;
 
 const OAvatar: React.FC<{
   isVideoEnabled: boolean;
-  isListeningEnabled: boolean;
-}> = ({ isVideoEnabled, isListeningEnabled }) => {
-  const { startListening, stopListening } = useTranscription();
+}> = ({ isVideoEnabled }) => {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [avatar, setAvatar] = useState<StreamingAvatar | null>(null);
   const [sessionData, setSessionData] = useState<any>(null);
   const [lastReadText, setLastReadText] = useState("");
   const [isSessionActive, setIsSessionActive] = useState(false);
   const [isLoadingAvatar, setIsLoadingAvatar] = useState(false);
+  const { stopListening, restartListening } = useTranscription();
 
   useEffect(() => {
     if (isVideoEnabled) {
@@ -34,18 +34,30 @@ const OAvatar: React.FC<{
     }
   }, [isVideoEnabled]);
 
-  const initAvatarTalking = (newAvatar: StreamingAvatar) => {
-    newAvatar?.on(StreamingEvents.AVATAR_START_TALKING, () => {
-      if (isListeningEnabled) {
+  useEffect(() => {
+    console.log("isListeningEnabled", isListeningButtonEnabled.value);
+    avatar?.off(StreamingEvents.AVATAR_START_TALKING, () => {});
+    avatar?.off(StreamingEvents.AVATAR_STOP_TALKING, () => {});
+    avatar?.on(StreamingEvents.AVATAR_START_TALKING, () => {
+      console.log(
+        "StreamingEvents.AVATAR_START_TALKING",
+        isListeningButtonEnabled.value
+      );
+      if (isListeningButtonEnabled.value) {
         stopListening();
       }
     });
-    newAvatar?.on(StreamingEvents.AVATAR_STOP_TALKING, () => {
-      if (isListeningEnabled) {
-        startListening();
+    avatar?.on(StreamingEvents.AVATAR_STOP_TALKING, () => {
+      debugger;
+      console.log(
+        "StreamingEvents.AVATAR_STOP_TALKING",
+        isListeningButtonEnabled.value
+      );
+      if (isListeningButtonEnabled.value) {
+        restartListening();
       }
     });
-  };
+  }, [avatar]);
 
   const fetchAccessToken = async (): Promise<string> => {
     try {
@@ -71,7 +83,6 @@ const OAvatar: React.FC<{
       const token = await fetchAccessToken();
       const newAvatar = new StreamingAvatar({ token });
       setAvatar(newAvatar);
-      initAvatarTalking(newAvatar);
 
       const data = await newAvatar.createStartAvatar({
         quality: AvatarQuality.High,
