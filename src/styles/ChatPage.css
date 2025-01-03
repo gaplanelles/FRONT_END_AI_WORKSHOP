@@ -298,3 +298,11 @@ body {
 .hidden-content.show-right {
   transform: translateX(-100%);
 }
+
+.text-secondary-hover:hover {
+  color: var(--bs-secondary) !important;
+}
+
+.text-warning-hover:hover {
+  color: var(--bs-warning) !important;
+}

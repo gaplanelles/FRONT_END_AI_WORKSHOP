@@ -269,7 +269,7 @@ function ChatPage() {
                         }}
                       >
                         <i
-                          className={`fas fa-lg fa-circle-stop text-warning`}
+                          className={`fas fa-lg fa-circle-stop text-warning text-secondary-hover`}
                           role="button"
                         />
                       </div>
@@ -284,8 +284,8 @@ function ChatPage() {
                       }}
                     >
                       <i
-                        className={`fas fa-lg fa-robot ${
-                          isVideoEnabled ? "text-warning" : "text-secondary"
+                        className={`fas fa-lg fa-robot  ${
+                          isVideoEnabled ? "text-warning text-secondary-hover" : "text-secondary text-warning-hover"
                         } `}
                         role="button"
                       />
@@ -337,8 +337,8 @@ function ChatPage() {
                     <i
                       className={`fas fa-lg fa-microphone ${
                         isListeningButtonEnabled.value
-                          ? "text-warning"
-                          : "text-secondary"
+                          ? "text-warning text-secondary-hover"
+                          : "text-secondary text-warning-hover"
                       } `}
                       role="button"
                     />
