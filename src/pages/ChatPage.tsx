@@ -16,6 +16,7 @@ import {
 } from "../services/chatService";
 
 export const isListeningButtonEnabled = signal(false);
+export const isTalkingActive = signal(false);
 
 function ChatPage() {
   const [messages, setMessages] = useState<any>([]);
@@ -44,10 +45,6 @@ function ChatPage() {
           fetchData(API_ENDPOINTS.RAG_CONFIG),
           fetchData(API_ENDPOINTS.SETUP_RAG_TEMPLATE),
         ]);
-
-        // console.log("Fetched RAG Config:", config);
-        // console.log("Fetched RAG Template:", template);
-
         setConfigData(config);
         setMetadata(template.metadata);
 
@@ -89,7 +86,7 @@ function ChatPage() {
     if (event.type === "event") {
       try {
         const data: any = JSON.parse(event.data);
-        console.log(`${new Date().toISOString()} - Parsed event:`, data);
+        // console.log(`${new Date().toISOString()} - Parsed event:`, data);
 
         if (data.type === "content") {
           tokenQueueRef.current.push(data.content);
@@ -201,13 +198,9 @@ function ChatPage() {
     scrollToBottom();
   }, [messages]);
 
-  const { isVideoEnabled, toggleVideo } = useVideo();
-  const {
-    isListening,
-    startListening,
-    stopListening,
-    setIsListening,
-  } = useTranscription();
+  const { isVideoEnabled, toggleVideo, isVideoActive, setIsVideoActive } =
+    useVideo();
+  const { startListening, stopListening, setIsListening } = useTranscription();
 
   const toggleListeningEnabled = () => {
     debugger;
@@ -230,31 +223,24 @@ function ChatPage() {
           className={`left-content ${isVideoEnabled ? "slide-left" : ""}`}
         >
           <div className="chat-page-container pe-0">
-            isListening: {JSON.stringify(isListening)}
+            {/* isListening: {JSON.stringify(isListening)}
             <br />
             isListeningButtonEnabled.value: {JSON.stringify(isListeningButtonEnabled.value)}
-            <br />
+            <br /> */}
             <div className="chat-interface">
               <div className="container">
                 <div className="mb-3 d-flex justify-content-between">
                   <div />
                   <div>AI Chat</div>
                   <div className="d-flex">
-                    <div
-                      onClick={() => {
-                        toggleListeningEnabled();
-                      }}
-                      className="me-3"
-                    >
-                      <i
-                        className={`fas fa-lg fa-microphone ${
-                          isListeningButtonEnabled.value
-                            ? "text-warning"
-                            : "text-secondary"
-                        } `}
-                        role="button"
-                      />
-                    </div>
+                    {isVideoActive && (
+                      <div className="me-3">
+                        <i
+                          className={`fas fa-lg fa-circle-stop text-warning`}
+                          role="button"
+                        />
+                      </div>
+                    )}
                     <div
                       onClick={() => {
                         toggleVideo();
@@ -277,7 +263,7 @@ function ChatPage() {
                     </div>
                   ))}
                 </div>
-                <div className="input-area">
+                <div className="input-area d-flex align-items-center">
                   <input
                     type="text"
                     id="userInput"
@@ -286,9 +272,29 @@ function ChatPage() {
                     onChange={(e) => setTranscription(e.target.value)}
                     onKeyPress={(e) => e.key === "Enter" && sendMessage()}
                   />
-                  <button id="sendButton" onClick={sendMessage}>
+
+                  <button
+                    id="sendButton"
+                    className="me-4"
+                    onClick={sendMessage}
+                  >
                     <i className="fas fa-paper-plane"></i>
                   </button>
+                  <div
+                    className="ms-2"
+                    onClick={() => {
+                      toggleListeningEnabled();
+                    }}
+                  >
+                    <i
+                      className={`fas fa-lg fa-microphone ${
+                        isListeningButtonEnabled.value
+                          ? "text-warning"
+                          : "text-secondary"
+                      } `}
+                      role="button"
+                    />
+                  </div>
                 </div>
               </div>
             </div>
@@ -306,9 +312,7 @@ function ChatPage() {
                   <div>Marry - Your Virtual Assistant</div>
                   <div />
                 </div>
-                <OAvatar
-                  isVideoEnabled={isVideoEnabled}
-                />
+                <OAvatar isVideoEnabled={isVideoEnabled} />
               </div>
             </div>
           </div>

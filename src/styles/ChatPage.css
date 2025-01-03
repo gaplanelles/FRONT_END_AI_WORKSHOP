@@ -150,10 +150,10 @@ body {
 }
 
 .input-area {
-  display: flex;
-  margin-top: auto;
+  /* display: flex; */
+  /* margin-top: auto; */
   position: relative;
-  width: 100%;
+  /* width: 100%; */
 }
 
 #userInput {

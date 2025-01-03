@@ -8,7 +8,8 @@ import StreamingAvatar, {
 } from "@heygen/streaming-avatar";
 import LoadingOverlay from "./LoadingOverlay";
 import { useTranscription } from "../context/TranscriptionContext";
-import { isListeningButtonEnabled } from "../pages/ChatPage";
+import { isListeningButtonEnabled, isTalkingActive } from "../pages/ChatPage";
+import { useVideo } from "../context/VideoContext";
 
 const hygenApiKey = process.env.REACT_APP_HEYGEN_API_KEY;
 const hygenApiUrl = process.env.REACT_APP_HEYGEN_API_URL;
@@ -25,6 +26,7 @@ const OAvatar: React.FC<{
   const [isSessionActive, setIsSessionActive] = useState(false);
   const [isLoadingAvatar, setIsLoadingAvatar] = useState(false);
   const { stopListening, restartListening } = useTranscription();
+  const {isVideoActive, setIsVideoActive} = useVideo();
 
   useEffect(() => {
     if (isVideoEnabled) {
@@ -39,6 +41,7 @@ const OAvatar: React.FC<{
     avatar?.off(StreamingEvents.AVATAR_START_TALKING, () => {});
     avatar?.off(StreamingEvents.AVATAR_STOP_TALKING, () => {});
     avatar?.on(StreamingEvents.AVATAR_START_TALKING, () => {
+      setIsVideoActive(true);
       console.log(
         "StreamingEvents.AVATAR_START_TALKING",
         isListeningButtonEnabled.value
@@ -48,6 +51,7 @@ const OAvatar: React.FC<{
       }
     });
     avatar?.on(StreamingEvents.AVATAR_STOP_TALKING, () => {
+      setIsVideoActive(false);
       debugger;
       console.log(
         "StreamingEvents.AVATAR_STOP_TALKING",
