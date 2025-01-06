@@ -264,7 +264,11 @@ function ChatPage() {
                         onClick={() => {
                           setIsVideoActive(false);
                           if (avatar?.mediaStream) {
-                            avatar?.interrupt();
+                            try {
+                              avatar?.interrupt();
+                            } catch (e) {
+                              console.log(e);
+                            }
                           }
                         }}
                       >
@@ -276,16 +280,20 @@ function ChatPage() {
                     )}
                     <div
                       onClick={async () => {
-                        debugger;
                         if (isVideoEnabled && avatar?.mediaStream) {
-                          avatar?.interrupt();
+                          avatar?.interrupt().then(
+                            () => {},
+                            () => {}
+                          );
                         }
                         toggleVideo();
                       }}
                     >
                       <i
                         className={`fas fa-lg fa-robot  ${
-                          isVideoEnabled ? "text-warning text-secondary-hover" : "text-secondary text-warning-hover"
+                          isVideoEnabled
+                            ? "text-warning text-secondary-hover"
+                            : "text-secondary text-warning-hover"
                         } `}
                         role="button"
                       />
@@ -308,7 +316,7 @@ function ChatPage() {
                               speakingByAvatar(msg.content);
                             }}
                           >
-                            <i className="fas fa-play text-secondary text-right" />
+                            <i className="fas fa-play text-secondary text-warning-hover text-right" />
                           </div>
                         )}
                     </div>

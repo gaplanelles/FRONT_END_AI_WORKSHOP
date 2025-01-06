@@ -96,7 +96,7 @@ export const heygenApi = {
       return await response.json();
     } catch (error) {
       console.error("Error sending text:", error);
-      throw error;
+      // throw error;
     }
   },
 };

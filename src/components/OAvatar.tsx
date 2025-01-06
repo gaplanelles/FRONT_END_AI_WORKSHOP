@@ -123,12 +123,16 @@ const OAvatar: React.FC<{
 
   const terminateAvatarSession = async () => {
     if (avatar && sessionData && isSessionActive) {
-      await avatar.stopAvatar();
-      if (videoRef.current) {
-        videoRef.current.srcObject = null;
+      try {
+        await avatar.stopAvatar();
+        if (videoRef.current) {
+          videoRef.current.srcObject = null;
+        }
+        setAvatar(null);
+        setIsSessionActive(false);
+      } catch (error) {
+        console.error("Error terminating avatar session:", error);
       }
-      setAvatar(null);
-      setIsSessionActive(false);
     }
   };
 
@@ -166,14 +170,18 @@ const OAvatar: React.FC<{
 
   useEffect(() => {
     return () => {
-      if (avatar) {
-        avatar.stopAvatar();
-        setAvatar(null);
-        setIsSessionActive(false);
+      try {
+        if (avatar) {
+          avatar.stopAvatar().then(() => {}, console.error).catch(console.error);
+          setAvatar(null);
+          setIsSessionActive(false);
+        }
+      } catch (error) {
+        console.error("Error stopping avatar:", error);
       }
     };
   }, [avatar]);
-  
+
   return (
     <LoadingOverlay isLoading={isLoadingAvatar}>
       <div className="avatar-container">
