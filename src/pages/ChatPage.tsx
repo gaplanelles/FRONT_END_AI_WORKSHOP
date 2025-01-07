@@ -282,11 +282,14 @@ function ChatPage() {
                       onClick={async () => {
                         if (isVideoEnabled && avatar?.mediaStream) {
                           avatar?.interrupt().then(
-                            () => {},
+                            () => {
+                              toggleVideo();
+                            },
                             () => {}
                           );
+                        } else {
+                          toggleVideo();
                         }
-                        toggleVideo();
                       }}
                     >
                       <i

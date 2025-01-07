@@ -175,6 +175,7 @@ const OAvatar: React.FC<{
           avatar.stopAvatar().then(() => {}, console.error).catch(console.error);
           setAvatar(null);
           setIsSessionActive(false);
+          setIsVideoActive(false);
         }
       } catch (error) {
         console.error("Error stopping avatar:", error);
