@@ -3,7 +3,7 @@
 export const HEYGEN_API_KEY =
   "MGNhY2E3MmZjMjVhNGMyNDhhNjIxYjZlNzQ4NGMyODEtMTczNDk0OTAxOA==";
 // export const HEYGEN_API_URL = 'https://api.heygen.com/v1';
-const HEYGEN_API_URL = "http://localhost:5005/api";
+const HEYGEN_API_URL = "https://api.heygen.com/v1";
 
 export const heygenApi = {
   // Inicjalizacja avatara
@@ -18,9 +18,9 @@ export const heygenApi = {
         },
         body: JSON.stringify({
           quality: 'medium',
-          voice: {rate: 1},
+          voice: {rate: 0.8},
           video_encoding: 'VP8',
-          disable_idle_timeout: false
+          disable_idle_timeout: true
         })
       });
       // const response = await fetch(`${HEYGEN_API_URL}/avatars`, {

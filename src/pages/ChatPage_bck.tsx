@@ -39,8 +39,6 @@ function ChatPage() {
   // Minimum delay between tokens in milliseconds
   const MIN_DELAY = 30; // Adjust as needed
 
-  const [showSatelliteIcon, setShowSatelliteIcon] = useState(false);
-
   useEffect(() => {
     if (dataFetchedRef.current) return;
     dataFetchedRef.current = true;
@@ -247,7 +245,6 @@ function ChatPage() {
         if (error.message?.includes("401")) {
           console.log("Please refresh avatar by clicking on robot button");
           alert("Please refresh avatar by clicking on robot button");
-          setShowSatelliteIcon(true);
         }
       }
     } else {
@@ -293,40 +290,6 @@ function ChatPage() {
 
   const avatarName = process.env.REACT_APP_HEGYGEN_AVATAR_NAME;
 
-  const restartVideoAndAvatar = async () => {
-    try {
-      console.log("Closing connections...");
-
-      // Stop the avatar if it's active
-      if (avatar) {
-        try {
-          await avatar.stopAvatar();
-        } catch (error) {
-          if (error instanceof Error && 'code' in error && (error as any).code === 400112) {
-            console.warn("Unauthorized error while stopping avatar, continuing...");
-          } else {
-            console.error("Error stopping avatar:", error);
-          }
-        }
-        setAvatar(null);
-      }
-
-      // Ensure video is disabled
-      if (isVideoEnabled) {
-        toggleVideo(); // This will set isVideoEnabled to false
-      }
-
-      // Set video active state to false
-      setIsVideoActive(false);
-
-      console.log("Connections closed successfully.");
-      setShowSatelliteIcon(false);
-
-    } catch (error) {
-      console.error("Error closing connections:", error);
-    }
-  };
-
   const handleStreamReady = (event: any) => {
     if (event.detail && chatBoxRef.current) {
       chatBoxRef.current.srcObject = event.detail;
@@ -334,7 +297,6 @@ function ChatPage() {
         chatBoxRef.current?.play().catch(console.error);
       };
     }
-    setIsVideoActive(true);
   };
 
   const handleStreamDisconnected = () => {
@@ -342,6 +304,47 @@ function ChatPage() {
       chatBoxRef.current.srcObject = null;
     }
     setIsVideoActive(false);
+  };
+
+  const restartVideoAndAvatar = async () => {
+    try {
+      // Stop the avatar if it's active
+      if (avatar) {
+        await avatar.stopAvatar();
+        setAvatar(null);
+      }
+
+      // Disable video if it's enabled
+      if (isVideoEnabled) {
+        toggleVideo(); // This will set isVideoEnabled to false
+      }
+
+      // Reinitialize the avatar session
+      const token = await fetchAccessToken();
+      const newAvatar = new StreamingAvatar({ token });
+      setAvatar(newAvatar);
+
+      const data = await newAvatar.createStartAvatar({
+        quality: AvatarQuality.High,
+        voice: {
+          rate: 0.8,
+          emotion: VoiceEmotion.FRIENDLY,
+        },
+        avatarName: avatarName || "avatar",
+        disableIdleTimeout: true,
+      });
+
+      // Enable video
+      toggleVideo(); // This will set isVideoEnabled to true
+      setIsVideoActive(true);
+
+      // Handle stream events
+      newAvatar.on(StreamingEvents.STREAM_READY, handleStreamReady);
+      newAvatar.on(StreamingEvents.STREAM_DISCONNECTED, handleStreamDisconnected);
+
+    } catch (error) {
+      console.error("Error restarting video and avatar:", error);
+    }
   };
 
   return (
@@ -352,6 +355,10 @@ function ChatPage() {
           className={`left-content ${isVideoEnabled ? "slide-left" : ""}`}
         >
           <div className="chat-page-container pe-0">
+            {/* isListening: {JSON.stringify(isListening)}
+            <br />
+            isListeningButtonEnabled.value: {JSON.stringify(isListeningButtonEnabled.value)}
+            <br /> */}
             <div className="chat-interface">
               <div className="container">
                 <div className="mb-3 d-flex justify-content-between">
@@ -378,19 +385,21 @@ function ChatPage() {
                         />
                       </div>
                     )}
+                    <button
+                      onClick={restartVideoAndAvatar}
+                      className="ms-2 btn btn-secondary"
+                    >
+                      Restart
+                    </button>
                     <div
                       onClick={async () => {
                         if (isVideoEnabled && avatar?.mediaStream) {
-                          try {
-                            await avatar.interrupt();
-                          } catch (error) {
-                            if (error instanceof Error && 'code' in error && (error as any).code === 400112) {
-                              console.warn("Unauthorized error while interrupting avatar, continuing...");
-                            } else {
-                              console.error("Error interrupting avatar:", error);
-                            }
-                          }
-                          toggleVideo();
+                          avatar?.interrupt().then(
+                            () => {
+                              toggleVideo();
+                            },
+                            () => {}
+                          );
                         } else {
                           toggleVideo();
                         }
@@ -405,15 +414,7 @@ function ChatPage() {
                         role="button"
                       />
                     </div>
-                    {showSatelliteIcon && (
-                      <div
-                        onClick={restartVideoAndAvatar}
-                        className="ms-2"
-                        role="button"
-                      >
-                        <i className="fas fa-lg fa-satellite text-secondary text-warning-hover" />
-                      </div>
-                    )}
+
                   </div>
                 </div>
                 <div id="chatBox" ref={chatBoxRef}>

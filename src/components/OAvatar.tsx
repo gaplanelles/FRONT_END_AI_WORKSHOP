@@ -5,6 +5,7 @@ import StreamingAvatar, {
   StreamingEvents,
   TaskMode,
   TaskType,
+  VoiceEmotion,
 } from "@heygen/streaming-avatar";
 import LoadingOverlay from "./LoadingOverlay";
 import { useTranscription } from "../context/TranscriptionContext";
@@ -87,7 +88,12 @@ const OAvatar: React.FC<{
 
       const data = await newAvatar.createStartAvatar({
         quality: AvatarQuality.High,
+        voice:   {
+          rate: 0.8,
+          emotion : VoiceEmotion.FRIENDLY
+        },
         avatarName: avatarName || "avatar",
+        disableIdleTimeout: true
       });
 
       setSessionData(data);
