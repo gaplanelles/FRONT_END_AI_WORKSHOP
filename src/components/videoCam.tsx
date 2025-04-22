@@ -32,7 +32,7 @@ const videoConstraints = {
             }
             
             console.log('Longitud de la imagen:', imageBase64.length);
-            const response = await fetch('http://139.185.59.9:9000/analyze_image', {
+            const response = await fetch('https://139.185.59.9:9000/analyze_image', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ image_base64: imageBase64 }),
