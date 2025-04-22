@@ -18,6 +18,22 @@ body {
   align-items: center;
 }
 
+.chat-page-container2 {
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  align-items: center;
+  height: 55%;
+}
+.chat-page-container3 {
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  align-items: center;
+  height: 5%;
+  margin-top: 30px;
+}
+
 .chat-interface {
   flex: 0 0 80vh;
   display: flex;
@@ -42,6 +58,33 @@ body {
   padding: 20px;
   box-sizing: border-box;
   border-image: url('../../public/images/rightRailTopBorder.png') 4 stretch;
+}
+.container2 {
+  max-width: 900px;
+  height: 70%;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  background-color: rgba(252, 251, 250, 0.9);
+  border-radius: 12px;
+  border-top: 4px solid transparent;
+  padding: 20px;
+  box-sizing: border-box;
+  border-image: url('../../public/images/rightRailTopBorder.png') 4 stretch;
+}
+.container3 {
+  max-width: 900px;
+  height: 30%;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  background-color: rgba(252, 251, 250, 0.9);
+  border-radius: 12px;
+  border-top: 4px solid transparent;
+  padding: 20px;
+  box-sizing: border-box;
+  border-image: url('../../public/images/rightRailTopBorder.png') 4 stretch;
+  margin-top: 10px;
 }
 
 .oracle-logo {
@@ -305,4 +348,12 @@ body {
 
 .text-warning-hover:hover {
   color: var(--bs-warning) !important;
+}
+
+.ms-2 {
+  margin-right: 0.5rem; /* Adjust this value as needed for spacing */
+}
+
+.me-3 {
+  margin-left: 1rem; /* Adjust this value as needed for spacing */
 }

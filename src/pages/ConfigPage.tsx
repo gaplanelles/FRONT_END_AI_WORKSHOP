@@ -16,7 +16,7 @@ function ConfigPage() {
 
   const fetchConfigData = async () => {
     try {
-      const response = await fetch('http://84.235.246.54:9000/setup_rag_template');
+      const response = await fetch('http://139.185.59.9:9007/setup_rag_template');
       if (!response.ok) {
         throw new Error('Failed to fetch configuration data');
       }

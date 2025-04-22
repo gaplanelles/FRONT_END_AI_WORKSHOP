@@ -20,7 +20,7 @@ export const heygenApi = {
           quality: 'medium',
           voice: {rate: 0.8},
           video_encoding: 'VP8',
-          disable_idle_timeout: true
+          disable_idle_timeout: false
         })
       });
       // const response = await fetch(`${HEYGEN_API_URL}/avatars`, {

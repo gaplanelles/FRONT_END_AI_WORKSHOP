@@ -30,6 +30,7 @@ function ChatPage() {
   const [metadata, setMetadata] = useState(null);
   const [error, setError] = useState<string | null>(null);
   const [sources, setSources] = useState([]);
+  const [isVideoCamVisible, setIsVideoCamVisible] = useState(true);
   const chatBoxRef = useRef<any>(null);
   const dataFetchedRef = useRef(false);
 
@@ -419,6 +420,19 @@ function ChatPage() {
                         role="button"
                       />
                     </div>
+                    <div
+                      onClick={() => setIsVideoCamVisible(!isVideoCamVisible)}
+                      className="ms-2"
+                    >
+                      <i
+                        className={`fas fa-lg fa-eye ${
+                          isVideoCamVisible
+                            ? "text-warning text-secondary-hover"
+                            : "text-secondary text-warning-hover"
+                        }`}
+                        role="button"
+                      />
+                    </div>
 
                   </div>
                 </div>
@@ -481,24 +495,35 @@ function ChatPage() {
           id="hiddenContent"
           className={`hidden-content  ${isVideoEnabled ? "show-right" : ""}`}
         >
-          <div className=" chat-page-container ps-0">
+          <div className=" chat-page-container2 ps-0">
             <div className="chat-interface">
-              <div className="container ">
+              <div className="container2 ">
                 <div className="mb-3 d-flex d-flex justify-content-between">
                   <div />
                   <div>Marija - Your Virtual Assistant</div>
                   <div />
                 </div>
                 <OAvatar isVideoEnabled={isVideoEnabled} />
-                <br></br>
-                
-                
-                
-               
-
               </div>
             </div>
           </div>
+          <div className=" chat-page-container3 ps-0">
+
+              <div className="container3" style={{ display: isVideoCamVisible ? 'block' : 'none' }}>
+                <div className="mb-3 d-flex d-flex justify-content-between">
+                  <div />
+                  
+                  <br></br>
+                  <div className="video-container">
+                  <VideoCam />
+                </div>
+                  <div />
+                </div>
+
+              </div>
+
+          </div>
+          
         </div>
       </div>
       <div className="d-flex justify-content-center">

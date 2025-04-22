@@ -12,6 +12,8 @@ import { useTranscription } from "../context/TranscriptionContext";
 import { isListeningButtonEnabled, isTalkingActive } from "../pages/ChatPage";
 import { useVideo } from "../context/VideoContext";
 
+
+
 const hygenApiKey = process.env.REACT_APP_HEYGEN_API_KEY;
 const hygenApiUrl = process.env.REACT_APP_HEYGEN_API_URL;
 const llmApiUrl = process.env.REACT_APP_LLM_API_URL;
@@ -28,6 +30,9 @@ const OAvatar: React.FC<{
   const [isLoadingAvatar, setIsLoadingAvatar] = useState(false);
   const { stopListening, restartListening } = useTranscription();
   const { avatar, setAvatar, setIsVideoActive } = useVideo();
+
+ 
+
 
   useEffect(() => {
     if (isVideoEnabled) {
@@ -89,11 +94,14 @@ const OAvatar: React.FC<{
       const data = await newAvatar.createStartAvatar({
         quality: AvatarQuality.High,
         voice:   {
-          rate: 0.8,
-          emotion : VoiceEmotion.FRIENDLY
+          //rate: 1.1, //spanish pure
+          rate: 0.9,
+          emotion : VoiceEmotion.FRIENDLY,
+          //voiceId: "511ffd086a904ef593b608032004112c", //Serbian: 511ffd086a904ef593b608032004112c Spanish(multilingual): 011af09cedd141feb57eafa51e5e98f9, a78e0a4dbbe247d0a704b91175e6d987, Spanish (pure: a78e0a4dbbe247d0a704b91175e6d987)
+          
         },
         avatarName: avatarName || "avatar",
-        disableIdleTimeout: true
+        disableIdleTimeout: false
       });
 
       setSessionData(data);
@@ -190,17 +198,21 @@ const OAvatar: React.FC<{
   }, [avatar]);
 
   return (
-    <LoadingOverlay isLoading={isLoadingAvatar}>
-      <div className="avatar-container">
-        <video
-          ref={videoRef}
-          id="avatarVideo"
-          className="avatar-video"
-          controls={true}
-          playsInline
-        />
-      </div>
-    </LoadingOverlay>
+
+        <LoadingOverlay isLoading={isLoadingAvatar}>
+            <div className="avatar-container">
+                <video
+                    ref={videoRef}
+                    id="avatarVideo"
+                    className="avatar-video"
+                    controls={true}
+                    playsInline
+                />
+            </div>
+
+        </LoadingOverlay>
+
+
   );
 };
 
