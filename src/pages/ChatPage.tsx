@@ -41,6 +41,7 @@ function ChatPage() {
   const MIN_DELAY = 30; // Adjust as needed
 
   const [showSatelliteIcon, setShowSatelliteIcon] = useState(false);
+  const [isCameraVisible, setIsCameraVisible] = useState(false);
 
   useEffect(() => {
     if (dataFetchedRef.current) return;
@@ -365,6 +366,10 @@ function ChatPage() {
     setIsVideoActive(false);
   };
 
+  const toggleCameraVisibility = () => {
+    setIsCameraVisible(!isCameraVisible);
+  };
+
   return (
     <>
       <div className="slide-container">
@@ -486,11 +491,21 @@ function ChatPage() {
               <div className="container ">
                 <div className="mb-3 d-flex d-flex justify-content-between">
                   <div />
-                  <div>Marija - Your Virtual Assistant</div>
+                  <div>Mary - Your Virtual Assistant</div>
                   <div />
                 </div>
                 <OAvatar isVideoEnabled={isVideoEnabled} />
-                <br></br>
+                <br />
+                <div className="d-flex justify-content-center mb-3">
+                  <div
+                    onClick={toggleCameraVisibility}
+                    className="btn btn-link"
+                    role="button"
+                  >
+                    <i className={`fas fa-eye${isCameraVisible ? '' : '-slash'} text-secondary text-warning-hover`} />
+                  </div>
+                </div>
+                {isCameraVisible && <VideoCam />}
                 
                 
                 
