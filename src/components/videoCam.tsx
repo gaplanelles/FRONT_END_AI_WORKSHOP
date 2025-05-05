@@ -41,7 +41,7 @@ const videoConstraints = {
             setDescription(data.description || 'Error analyzing image');
         } catch (error) {
             console.error('Error sending image:', error);
-            setDescription('Failed to analyze image.');
+            setDescription('...');
         }
     };
   
@@ -65,7 +65,7 @@ const videoConstraints = {
             } catch (error) {
                 console.error('Error al capturar screenshot:', error);
             }
-        }, 3000);
+        }, 5000);
   
         return () => clearInterval(interval);
     }, []);
