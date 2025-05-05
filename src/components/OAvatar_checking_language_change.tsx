@@ -9,30 +9,22 @@ import StreamingAvatar, {
 } from "@heygen/streaming-avatar";
 import LoadingOverlay from "./LoadingOverlay";
 import { useTranscription } from "../context/TranscriptionContext";
-import { isListeningButtonEnabled, isTalkingActive } from "../pages/ChatPage";
+import { isListeningButtonEnabled } from "../pages/ChatPage";
 import { useVideo } from "../context/VideoContext";
-
-
 
 const hygenApiKey = process.env.REACT_APP_HEYGEN_API_KEY;
 const hygenApiUrl = process.env.REACT_APP_HEYGEN_API_URL;
 const llmApiUrl = process.env.REACT_APP_LLM_API_URL;
 const avatarName = process.env.REACT_APP_HEGYGEN_AVATAR_NAME;
 
-const OAvatar: React.FC<{
-  isVideoEnabled: boolean;
-}> = ({ isVideoEnabled }) => {
+const OAvatar: React.FC<{ isVideoEnabled: boolean }> = ({ isVideoEnabled }) => {
   const videoRef = useRef<HTMLVideoElement>(null);
-  // const [avatar, setAvatar] = useState<StreamingAvatar | null>(null);
   const [sessionData, setSessionData] = useState<any>(null);
   const [lastReadText, setLastReadText] = useState("");
   const [isSessionActive, setIsSessionActive] = useState(false);
   const [isLoadingAvatar, setIsLoadingAvatar] = useState(false);
   const { stopListening, restartListening } = useTranscription();
   const { avatar, setAvatar, setIsVideoActive } = useVideo();
-
- 
-
 
   useEffect(() => {
     if (isVideoEnabled) {
@@ -43,26 +35,13 @@ const OAvatar: React.FC<{
   }, [isVideoEnabled]);
 
   useEffect(() => {
-    console.log("isListeningEnabled", isListeningButtonEnabled.value);
     avatar?.on(StreamingEvents.AVATAR_START_TALKING, () => {
       setIsVideoActive(true);
-      console.log(
-        "StreamingEvents.AVATAR_START_TALKING",
-        isListeningButtonEnabled.value
-      );
-      if (isListeningButtonEnabled.value) {
-        stopListening();
-      }
+      if (isListeningButtonEnabled.value) stopListening();
     });
     avatar?.on(StreamingEvents.AVATAR_STOP_TALKING, () => {
       setIsVideoActive(false);
-      console.log(
-        "StreamingEvents.AVATAR_STOP_TALKING",
-        isListeningButtonEnabled.value
-      );
-      if (isListeningButtonEnabled.value) {
-        restartListening();
-      }
+      if (isListeningButtonEnabled.value) restartListening();
     });
   }, [avatar]);
 
@@ -84,34 +63,49 @@ const OAvatar: React.FC<{
     }
   };
 
+  const fetchResponseLanguage = async (): Promise<string> => {
+    try {
+      const response = await fetch("https://139.185.59.9:9007/get_response_language");
+      const data = await response.json();
+      return data.value;
+    } catch (error) {
+      console.error("Error fetching response language:", error);
+      return "";
+    }
+  };
+
   const initializeAvatarSession = async () => {
     try {
       setIsLoadingAvatar(true);
+
       const token = await fetchAccessToken();
+      const responseLanguage = await fetchResponseLanguage();
+
+      const voiceId =
+        responseLanguage.trim() === "Español."
+          ? "a78e0a4dbbe247d0a704b91175e6d987"
+          : "011af09cedd141feb57eafa51e5e98f9";
+
       const newAvatar = new StreamingAvatar({ token });
       setAvatar(newAvatar);
 
       const data = await newAvatar.createStartAvatar({
         quality: AvatarQuality.High,
-        voice:   {
-          //rate: 1.1, //spanish pure
+        voice: {
           rate: 0.9,
-          emotion : VoiceEmotion.FRIENDLY,
-          //voiceId: "011af09cedd141feb57eafa51e5e98f9", //Serbian: 511ffd086a904ef593b608032004112c Spanish(multilingual): 011af09cedd141feb57eafa51e5e98f9, a78e0a4dbbe247d0a704b91175e6d987, Spanish (pure: a78e0a4dbbe247d0a704b91175e6d987)
-
+          emotion: VoiceEmotion.FRIENDLY,
+          voiceId: voiceId,
         },
         avatarName: avatarName || "avatar",
-        disableIdleTimeout: false
+        disableIdleTimeout: false,
       });
 
       setSessionData(data);
       setIsSessionActive(true);
 
       newAvatar.on(StreamingEvents.STREAM_READY, handleStreamReady);
-      newAvatar.on(
-        StreamingEvents.STREAM_DISCONNECTED,
-        handleStreamDisconnected
-      );
+      newAvatar.on(StreamingEvents.STREAM_DISCONNECTED, handleStreamDisconnected);
+
       setIsLoadingAvatar(false);
     } catch (error) {
       console.error("Error initializing avatar session:", error);
@@ -176,9 +170,7 @@ const OAvatar: React.FC<{
       pollingInterval = setInterval(fetchAndReadText, 3000);
     }
     return () => {
-      if (pollingInterval) {
-        clearInterval(pollingInterval);
-      }
+      if (pollingInterval) clearInterval(pollingInterval);
     };
   }, [isSessionActive, avatar, lastReadText]);
 
@@ -198,21 +190,17 @@ const OAvatar: React.FC<{
   }, [avatar]);
 
   return (
-
-        <LoadingOverlay isLoading={isLoadingAvatar}>
-            <div className="avatar-container">
-                <video
-                    ref={videoRef}
-                    id="avatarVideo"
-                    className="avatar-video"
-                    controls={true}
-                    playsInline
-                />
-            </div>
-
-        </LoadingOverlay>
-
-
+    <LoadingOverlay isLoading={isLoadingAvatar}>
+      <div className="avatar-container">
+        <video
+          ref={videoRef}
+          id="avatarVideo"
+          className="avatar-video"
+          controls={true}
+          playsInline
+        />
+      </div>
+    </LoadingOverlay>
   );
 };
 
