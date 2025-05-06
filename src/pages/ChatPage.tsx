@@ -491,7 +491,7 @@ function ChatPage() {
               <div className="container ">
                 <div className="mb-3 d-flex d-flex justify-content-between">
                   <div />
-                  <div>María - Tu asistente virtual</div>
+                  <div>Manuel - Tu asistente virtual</div>
                   <div />
                 </div>
                 <OAvatar isVideoEnabled={isVideoEnabled} />
