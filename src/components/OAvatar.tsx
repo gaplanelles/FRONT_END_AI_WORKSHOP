@@ -101,7 +101,7 @@ const OAvatar: React.FC<{
 
         },
         avatarName: avatarName || "avatar",
-        disableIdleTimeout: true
+        disableIdleTimeout: false
       });
 
       setSessionData(data);
