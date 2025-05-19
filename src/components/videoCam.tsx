@@ -112,7 +112,7 @@ const videoConstraints = {
         )}
         
         <div className="description-box">
-          <p>Manuel está viendo {description}</p>
+          <p>Mary is seeing {description}</p>
         </div>
       </div>
       </>
