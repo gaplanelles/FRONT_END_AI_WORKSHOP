@@ -36,6 +36,7 @@ function ChatPage() {
   const [isTeamWhiteListening, setIsTeamWhiteListening] = useState(false);
   const chatBoxRef = useRef<any>(null);
   const dataFetchedRef = useRef(false);
+  const recognitionRef = useRef<any>(null);
 
   // Queue to hold incoming tokens
   const tokenQueueRef = useRef<string[]>([]);
@@ -374,6 +375,80 @@ function ChatPage() {
     setIsCameraVisible(!isCameraVisible);
   };
 
+  useEffect(() => {
+    // Initialize speech recognition
+    if ('webkitSpeechRecognition' in window) {
+      recognitionRef.current = new (window as any).webkitSpeechRecognition();
+      recognitionRef.current.continuous = true;
+      recognitionRef.current.interimResults = true;
+      recognitionRef.current.lang = 'en-US';
+    }
+  }, []);
+
+  const startTeamBlueListening = () => {
+    if (recognitionRef.current) {
+      recognitionRef.current.onresult = (event: any) => {
+        const transcript = Array.from(event.results)
+          .map((result: any) => result[0].transcript)
+          .join('');
+        setTeamBlueSpeech(transcript);
+      };
+      recognitionRef.current.start();
+      setIsTeamBlueListening(true);
+    }
+  };
+
+  const stopTeamBlueListening = () => {
+    if (recognitionRef.current) {
+      recognitionRef.current.stop();
+      setIsTeamBlueListening(false);
+    }
+  };
+
+  const startTeamWhiteListening = () => {
+    if (recognitionRef.current) {
+      recognitionRef.current.onresult = (event: any) => {
+        const transcript = Array.from(event.results)
+          .map((result: any) => result[0].transcript)
+          .join('');
+        setTeamWhiteSpeech(transcript);
+      };
+      recognitionRef.current.start();
+      setIsTeamWhiteListening(true);
+    }
+  };
+
+  const stopTeamWhiteListening = () => {
+    if (recognitionRef.current) {
+      recognitionRef.current.stop();
+      setIsTeamWhiteListening(false);
+    }
+  };
+
+  const toggleTeamBlueListening = () => {
+    if (isTeamBlueListening) {
+      stopTeamBlueListening();
+    } else {
+      // Stop white team if it's listening
+      if (isTeamWhiteListening) {
+        stopTeamWhiteListening();
+      }
+      startTeamBlueListening();
+    }
+  };
+
+  const toggleTeamWhiteListening = () => {
+    if (isTeamWhiteListening) {
+      stopTeamWhiteListening();
+    } else {
+      // Stop blue team if it's listening
+      if (isTeamBlueListening) {
+        stopTeamBlueListening();
+      }
+      startTeamWhiteListening();
+    }
+  };
+
   return (
     <>
       <div className="slide-container">
@@ -534,7 +609,7 @@ function ChatPage() {
                 />
                 <div 
                   className="team-speech-mic"
-                  onClick={() => setIsTeamBlueListening(!isTeamBlueListening)}
+                  onClick={toggleTeamBlueListening}
                 >
                   <i
                     className={`fas fa-lg fa-microphone ${
@@ -558,7 +633,7 @@ function ChatPage() {
                 />
                 <div 
                   className="team-speech-mic"
-                  onClick={() => setIsTeamWhiteListening(!isTeamWhiteListening)}
+                  onClick={toggleTeamWhiteListening}
                 >
                   <i
                     className={`fas fa-lg fa-microphone ${
