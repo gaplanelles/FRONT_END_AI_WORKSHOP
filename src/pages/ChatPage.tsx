@@ -552,8 +552,16 @@ function ChatPage() {
                       </div>
                     )}
                     <div
+                      onClick={() => setIsTeamSpeechCollapsed(!isTeamSpeechCollapsed)}
+                      className="me-2"
+                      role="button"
+                    >
+                      <i className={`fas fa-lg fa-comments ${isTeamSpeechCollapsed ? "text-secondary text-warning-hover" : "text-warning text-secondary-hover"}`} />
+                    </div>
+
+                    <div
                       onClick={restartVideoAndAvatar}
-                      className="ms-2"
+                      className="me-2"
                       role="button"
                     >
                       <i className="fas fa-lg fa-satellite text-secondary text-warning-hover" />
@@ -561,7 +569,7 @@ function ChatPage() {
                     
                     <div
                       onClick={handleRobotButtonClick}
-                      className="ms-2"
+                      className="me-2"
                     >
                       <i
                         className={`fas fa-lg fa-robot  ${
@@ -572,15 +580,6 @@ function ChatPage() {
                         role="button"
                       />
                     </div>
-
-                    <div
-                      onClick={() => setIsTeamSpeechCollapsed(!isTeamSpeechCollapsed)}
-                      className="ms-2"
-                      role="button"
-                    >
-                      <i className={`fas fa-lg fa-comments ${isTeamSpeechCollapsed ? "text-secondary text-warning-hover" : "text-warning text-secondary-hover"}`} />
-                    </div>
-
                   </div>
                 </div>
                 <div id="chatBox" ref={chatBoxRef}>
