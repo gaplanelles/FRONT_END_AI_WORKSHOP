@@ -474,9 +474,9 @@ function ChatPage() {
       const data = await response.json();
       
       if (isBlue) {
-        setTeamBlueSpeech(data.structured_text || data.text || '');
+        setTeamBlueSpeech(data.structured_speech || '');
       } else {
-        setTeamWhiteSpeech(data.structured_text || data.text || '');
+        setTeamWhiteSpeech(data.structured_speech || '');
       }
     } catch (error) {
       console.error('Error structuring text:', error);
