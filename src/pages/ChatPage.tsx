@@ -668,72 +668,72 @@ function ChatPage() {
             <div className="team-speech-section">
               <h3>Team Blue Speech</h3>
               <div className="team-speech-input">
-                <textarea
-                  value={teamBlueSpeech}
-                  onChange={(e) => setTeamBlueSpeech(e.target.value)}
-                  placeholder="Team Blue's speech will appear here..."
-                  className="team-speech-textarea"
-                />
-                <div className="team-speech-controls">
-                  <div 
-                    className="team-speech-mic"
-                    onClick={toggleTeamBlueListening}
-                  >
-                    <i
-                      className={`fas fa-lg fa-microphone ${
-                        isTeamBlueListening
-                          ? "text-warning text-secondary-hover"
-                          : "text-secondary text-warning-hover"
-                      }`}
-                      role="button"
-                    />
+                <div className="team-speech-content">
+                  <textarea
+                    value={teamBlueSpeech}
+                    onChange={(e) => setTeamBlueSpeech(e.target.value)}
+                    placeholder="Team Blue's speech will appear here..."
+                    className="team-speech-textarea"
+                  />
+                  <div className="team-speech-controls">
+                    <div 
+                      className="team-speech-mic"
+                      onClick={toggleTeamBlueListening}
+                    >
+                      <i
+                        className={`fas fa-lg fa-microphone ${
+                          isTeamBlueListening
+                            ? "text-warning text-secondary-hover"
+                            : "text-secondary text-warning-hover"
+                        }`}
+                        role="button"
+                      />
+                    </div>
+                    <button
+                      className="structure-button"
+                      onClick={() => structureText(teamBlueSpeech, true)}
+                      disabled={!teamBlueSpeech || isStructuringBlue}
+                      title="Structure text using AI"
+                    >
+                      <i className="fas fa-magic" />
+                    </button>
                   </div>
-                </div>
-                <div className="structure-button-container">
-                  <button
-                    className="structure-button"
-                    onClick={() => structureText(teamBlueSpeech, true)}
-                    disabled={!teamBlueSpeech || isStructuringBlue}
-                    title="Structure text using AI"
-                  >
-                    <i className="fas fa-magic" />
-                  </button>
                 </div>
               </div>
             </div>
             <div className="team-speech-section">
               <h3>Team White Speech</h3>
               <div className="team-speech-input">
-                <textarea
-                  value={teamWhiteSpeech}
-                  onChange={(e) => setTeamWhiteSpeech(e.target.value)}
-                  placeholder="Team White's speech will appear here..."
-                  className="team-speech-textarea"
-                />
-                <div className="team-speech-controls">
-                  <div 
-                    className="team-speech-mic"
-                    onClick={toggleTeamWhiteListening}
-                  >
-                    <i
-                      className={`fas fa-lg fa-microphone ${
-                        isTeamWhiteListening
-                          ? "text-warning text-secondary-hover"
-                          : "text-secondary text-warning-hover"
-                      }`}
-                      role="button"
-                    />
+                <div className="team-speech-content">
+                  <textarea
+                    value={teamWhiteSpeech}
+                    onChange={(e) => setTeamWhiteSpeech(e.target.value)}
+                    placeholder="Team White's speech will appear here..."
+                    className="team-speech-textarea"
+                  />
+                  <div className="team-speech-controls">
+                    <div 
+                      className="team-speech-mic"
+                      onClick={toggleTeamWhiteListening}
+                    >
+                      <i
+                        className={`fas fa-lg fa-microphone ${
+                          isTeamWhiteListening
+                            ? "text-warning text-secondary-hover"
+                            : "text-secondary text-warning-hover"
+                        }`}
+                        role="button"
+                      />
+                    </div>
+                    <button
+                      className="structure-button"
+                      onClick={() => structureText(teamWhiteSpeech, false)}
+                      disabled={!teamWhiteSpeech || isStructuringWhite}
+                      title="Structure text using AI"
+                    >
+                      <i className="fas fa-magic" />
+                    </button>
                   </div>
-                </div>
-                <div className="structure-button-container">
-                  <button
-                    className="structure-button"
-                    onClick={() => structureText(teamWhiteSpeech, false)}
-                    disabled={!teamWhiteSpeech || isStructuringWhite}
-                    title="Structure text using AI"
-                  >
-                    <i className="fas fa-magic" />
-                  </button>
                 </div>
               </div>
             </div>

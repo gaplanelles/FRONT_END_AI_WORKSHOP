@@ -389,6 +389,12 @@ body {
   gap: 10px;
 }
 
+.team-speech-content {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+}
+
 .team-speech-textarea {
   flex: 1;
   min-height: 100px;
@@ -400,35 +406,19 @@ body {
   background-color: #FFFFFF;
 }
 
+.team-speech-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding-top: 5px;
+}
+
 .team-speech-mic {
   padding: 10px;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-}
-
-@media (max-width: 768px) {
-  .team-speech-container {
-    flex-direction: column;
-  }
-  
-  .team-speech-section {
-    width: 100%;
-  }
-}
-
-.team-speech-controls {
-  display: flex;
-  justify-content: center;
-  width: 100%;
-}
-
-.structure-button-container {
-  display: flex;
-  justify-content: center;
-  width: 100%;
-  margin-top: 5px;
 }
 
 .structure-button {
@@ -488,6 +478,24 @@ body {
 }
 
 @media (max-width: 768px) {
+  .team-speech-container {
+    flex-direction: column;
+  }
+  
+  .team-speech-section {
+    width: 100%;
+  }
+  
+  .team-speech-content {
+    flex-direction: column;
+  }
+  
+  .team-speech-controls {
+    flex-direction: row;
+    justify-content: center;
+    width: 100%;
+  }
+  
   .structure-button {
     width: 36px;
     height: 36px;
