@@ -595,7 +595,7 @@ function ChatPage() {
                     </div>
                   ))}
                 </div>
-                <div className="input-area d-flex align-items-center">
+                <div className="input-area">
                   <input
                     type="text"
                     id="userInput"
@@ -605,36 +605,36 @@ function ChatPage() {
                     onChange={(e) => setTranscription(e.target.value)}
                     onKeyPress={(e) => e.key === "Enter" && sendMessage()}
                   />
-
+                  <div className="chat-controls">
+                    <div onClick={toggleListeningEnabled}>
+                      <i
+                        className={`fas fa-lg fa-microphone ${
+                          isListeningButtonEnabled.value
+                            ? "text-warning text-secondary-hover"
+                            : "text-secondary text-warning-hover"
+                        } `}
+                        role="button"
+                      />
+                    </div>
+                    <div onClick={() => setIsTeamSpeechCollapsed(!isTeamSpeechCollapsed)}>
+                      <i
+                        className={`fas fa-lg fa-comments ${
+                          isTeamSpeechCollapsed
+                            ? "text-secondary text-warning-hover"
+                            : "text-warning text-secondary-hover"
+                        }`}
+                        role="button"
+                        title={isTeamSpeechCollapsed ? "Expand team speech" : "Collapse team speech"}
+                      />
+                    </div>
+                  </div>
                   <button
                     id="sendButton"
-                    className="me-4"
                     disabled={isLoadingAnswer}
                     onClick={sendMessage}
                   >
                     <i className="fas fa-paper-plane"></i>
                   </button>
-                  <div className="ms-2" onClick={toggleListeningEnabled}>
-                    <i
-                      className={`fas fa-lg fa-microphone ${
-                        isListeningButtonEnabled.value
-                          ? "text-warning text-secondary-hover"
-                          : "text-secondary text-warning-hover"
-                      } `}
-                      role="button"
-                    />
-                  </div>
-                  <div className="ms-2" onClick={() => setIsTeamSpeechCollapsed(!isTeamSpeechCollapsed)}>
-                    <i
-                      className={`fas fa-lg fa-comments ${
-                        isTeamSpeechCollapsed
-                          ? "text-secondary text-warning-hover"
-                          : "text-warning text-secondary-hover"
-                      }`}
-                      role="button"
-                      title={isTeamSpeechCollapsed ? "Expand team speech" : "Collapse team speech"}
-                    />
-                  </div>
                 </div>
               </div>
             </div>
