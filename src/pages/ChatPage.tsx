@@ -561,6 +561,7 @@ function ChatPage() {
                     
                     <div
                       onClick={handleRobotButtonClick}
+                      className="ms-2"
                     >
                       <i
                         className={`fas fa-lg fa-robot  ${
@@ -570,6 +571,14 @@ function ChatPage() {
                         } `}
                         role="button"
                       />
+                    </div>
+
+                    <div
+                      onClick={() => setIsTeamSpeechCollapsed(!isTeamSpeechCollapsed)}
+                      className="ms-2"
+                      role="button"
+                    >
+                      <i className={`fas fa-lg fa-comments ${isTeamSpeechCollapsed ? "text-secondary text-warning-hover" : "text-warning text-secondary-hover"}`} />
                     </div>
 
                   </div>
@@ -665,15 +674,6 @@ function ChatPage() {
       </div>
       <div className="d-flex justify-content-center">
         <div className="bottom-section">
-          <div className="d-flex justify-content-end mb-2">
-            <button
-              className="btn btn-link"
-              onClick={() => setIsTeamSpeechCollapsed(!isTeamSpeechCollapsed)}
-              title={isTeamSpeechCollapsed ? "Expand team speech" : "Collapse team speech"}
-            >
-              <i className={`fas fa-lg fa-comments ${isTeamSpeechCollapsed ? "text-secondary text-warning-hover" : "text-warning text-secondary-hover"}`} />
-            </button>
-          </div>
           <div className={`team-speech-container ${isTeamSpeechCollapsed ? "collapsed" : ""}`}>
             <div className="team-speech-section">
               <h3>Team Blue Speech</h3>
