@@ -361,18 +361,55 @@ body {
 .team-speech-container {
   display: flex;
   flex-direction: column;
-  gap: 20px;
   width: 100%;
-  padding: 20px;
   background-color: rgba(252, 251, 250, 0.9);
   border-radius: 12px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+.team-speech-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 20px;
+  background-color: #69615c;
+  color: white;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.team-speech-header:hover {
+  background-color: #7d746e;
+}
+
+.team-speech-header h3 {
+  margin: 0;
+  font-size: 18px;
+}
+
+.team-speech-header i {
+  transition: transform 0.3s ease;
+}
+
+.team-speech-content {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease-out;
+  opacity: 0;
+}
+
+.team-speech-content.visible {
+  max-height: 1000px; /* Ajusta este valor según el contenido máximo esperado */
+  opacity: 1;
+  transition: max-height 0.5s ease-in, opacity 0.3s ease-in;
 }
 
 .team-speech-sections {
   display: flex;
   gap: 20px;
   width: 100%;
+  padding: 20px;
 }
 
 .team-speech-section {
@@ -485,10 +522,19 @@ body {
 
 @media (max-width: 768px) {
   .team-speech-container {
-    padding: 15px;
+    padding: 0;
+  }
+  
+  .team-speech-header {
+    padding: 12px 15px;
+  }
+  
+  .team-speech-header h3 {
+    font-size: 16px;
   }
   
   .team-speech-sections {
+    padding: 15px;
     flex-direction: column;
   }
   
