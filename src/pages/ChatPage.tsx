@@ -688,6 +688,8 @@ function ChatPage() {
                       role="button"
                     />
                   </div>
+                </div>
+                <div className="structure-button-container">
                   <button
                     className="structure-button"
                     onClick={() => structureText(teamBlueSpeech, true)}
@@ -722,6 +724,8 @@ function ChatPage() {
                       role="button"
                     />
                   </div>
+                </div>
+                <div className="structure-button-container">
                   <button
                     className="structure-button"
                     onClick={() => structureText(teamWhiteSpeech, false)}
@@ -733,15 +737,15 @@ function ChatPage() {
                 </div>
               </div>
             </div>
-            <div className="merge-speeches-container">
-              <button
-                className="merge-button"
-                onClick={mergeSpeeches}
-                disabled={!teamBlueSpeech || !teamWhiteSpeech}
-              >
-                Merge Speeches
-              </button>
-            </div>
+          </div>
+          <div className="merge-speeches-container">
+            <button
+              className="merge-button"
+              onClick={mergeSpeeches}
+              disabled={!teamBlueSpeech || !teamWhiteSpeech}
+            >
+              Merge Speeches
+            </button>
           </div>
         </div>
       </div>
