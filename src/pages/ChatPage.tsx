@@ -492,7 +492,7 @@ function ChatPage() {
 
   const mergeSpeeches = () => {
     if (teamBlueSpeech && teamWhiteSpeech) {
-      const mergedText = `**Team Blue Speech:**\n${teamBlueSpeech}\n\n**Team White Speech:**\n${teamWhiteSpeech}`;
+      const mergedText = `**Team Blue Speech:**\n\n${teamBlueSpeech}\n\n**Team White Speech:**\n\n${teamWhiteSpeech}`;
       
       // Add the merged text as a user message
       const newMessage = { type: "user", content: mergedText };
@@ -692,8 +692,9 @@ function ChatPage() {
                     className="structure-button"
                     onClick={() => structureText(teamBlueSpeech, true)}
                     disabled={!teamBlueSpeech || isStructuringBlue}
+                    title="Structure text using AI"
                   >
-                    {isStructuringBlue ? 'Structuring...' : 'Structure text using AI'}
+                    <i className="fas fa-magic" />
                   </button>
                 </div>
               </div>
@@ -725,21 +726,22 @@ function ChatPage() {
                     className="structure-button"
                     onClick={() => structureText(teamWhiteSpeech, false)}
                     disabled={!teamWhiteSpeech || isStructuringWhite}
+                    title="Structure text using AI"
                   >
-                    {isStructuringWhite ? 'Structuring...' : 'Structure text using AI'}
+                    <i className="fas fa-magic" />
                   </button>
                 </div>
               </div>
             </div>
-          </div>
-          <div className="merge-speeches-container">
-            <button
-              className="merge-button"
-              onClick={mergeSpeeches}
-              disabled={!teamBlueSpeech || !teamWhiteSpeech}
-            >
-              Merge Speeches
-            </button>
+            <div className="merge-speeches-container">
+              <button
+                className="merge-button"
+                onClick={mergeSpeeches}
+                disabled={!teamBlueSpeech || !teamWhiteSpeech}
+              >
+                Merge Speeches
+              </button>
+            </div>
           </div>
         </div>
       </div>
