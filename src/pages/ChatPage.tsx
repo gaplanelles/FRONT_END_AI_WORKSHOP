@@ -30,6 +30,10 @@ function ChatPage() {
   const [metadata, setMetadata] = useState(null);
   const [error, setError] = useState<string | null>(null);
   const [sources, setSources] = useState([]);
+  const [teamBlueSpeech, setTeamBlueSpeech] = useState("");
+  const [teamWhiteSpeech, setTeamWhiteSpeech] = useState("");
+  const [isTeamBlueListening, setIsTeamBlueListening] = useState(false);
+  const [isTeamWhiteListening, setIsTeamWhiteListening] = useState(false);
   const chatBoxRef = useRef<any>(null);
   const dataFetchedRef = useRef(false);
 
@@ -518,8 +522,56 @@ function ChatPage() {
       </div>
       <div className="d-flex justify-content-center">
         <div className="bottom-section">
-          
-
+          <div className="team-speech-container">
+            <div className="team-speech-section">
+              <h3>Team Blue Speech</h3>
+              <div className="team-speech-input">
+                <textarea
+                  value={teamBlueSpeech}
+                  onChange={(e) => setTeamBlueSpeech(e.target.value)}
+                  placeholder="Team Blue's speech will appear here..."
+                  className="team-speech-textarea"
+                />
+                <div 
+                  className="team-speech-mic"
+                  onClick={() => setIsTeamBlueListening(!isTeamBlueListening)}
+                >
+                  <i
+                    className={`fas fa-lg fa-microphone ${
+                      isTeamBlueListening
+                        ? "text-warning text-secondary-hover"
+                        : "text-secondary text-warning-hover"
+                    }`}
+                    role="button"
+                  />
+                </div>
+              </div>
+            </div>
+            <div className="team-speech-section">
+              <h3>Team White Speech</h3>
+              <div className="team-speech-input">
+                <textarea
+                  value={teamWhiteSpeech}
+                  onChange={(e) => setTeamWhiteSpeech(e.target.value)}
+                  placeholder="Team White's speech will appear here..."
+                  className="team-speech-textarea"
+                />
+                <div 
+                  className="team-speech-mic"
+                  onClick={() => setIsTeamWhiteListening(!isTeamWhiteListening)}
+                >
+                  <i
+                    className={`fas fa-lg fa-microphone ${
+                      isTeamWhiteListening
+                        ? "text-warning text-secondary-hover"
+                        : "text-secondary text-warning-hover"
+                    }`}
+                    role="button"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
 
