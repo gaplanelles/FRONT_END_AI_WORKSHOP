@@ -34,6 +34,8 @@ function ChatPage() {
   const [teamWhiteSpeech, setTeamWhiteSpeech] = useState("");
   const [isTeamBlueListening, setIsTeamBlueListening] = useState(false);
   const [isTeamWhiteListening, setIsTeamWhiteListening] = useState(false);
+  const [isStructuringBlue, setIsStructuringBlue] = useState(false);
+  const [isStructuringWhite, setIsStructuringWhite] = useState(false);
   const chatBoxRef = useRef<any>(null);
   const dataFetchedRef = useRef(false);
   const recognitionRef = useRef<any>(null);
@@ -449,6 +451,45 @@ function ChatPage() {
     }
   };
 
+  const structureText = async (text: string, isBlue: boolean) => {
+    try {
+      if (isBlue) {
+        setIsStructuringBlue(true);
+      } else {
+        setIsStructuringWhite(true);
+      }
+
+      const response = await fetch('http://localhost:9007/structuring_speech', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ text }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to structure text');
+      }
+
+      const data = await response.json();
+      
+      if (isBlue) {
+        setTeamBlueSpeech(data.structured_text || data.text || '');
+      } else {
+        setTeamWhiteSpeech(data.structured_text || data.text || '');
+      }
+    } catch (error) {
+      console.error('Error structuring text:', error);
+      // You might want to show an error message to the user here
+    } finally {
+      if (isBlue) {
+        setIsStructuringBlue(false);
+      } else {
+        setIsStructuringWhite(false);
+      }
+    }
+  };
+
   return (
     <>
       <div className="slide-container">
@@ -607,18 +648,27 @@ function ChatPage() {
                   placeholder="Team Blue's speech will appear here..."
                   className="team-speech-textarea"
                 />
-                <div 
-                  className="team-speech-mic"
-                  onClick={toggleTeamBlueListening}
-                >
-                  <i
-                    className={`fas fa-lg fa-microphone ${
-                      isTeamBlueListening
-                        ? "text-warning text-secondary-hover"
-                        : "text-secondary text-warning-hover"
-                    }`}
-                    role="button"
-                  />
+                <div className="team-speech-controls">
+                  <div 
+                    className="team-speech-mic"
+                    onClick={toggleTeamBlueListening}
+                  >
+                    <i
+                      className={`fas fa-lg fa-microphone ${
+                        isTeamBlueListening
+                          ? "text-warning text-secondary-hover"
+                          : "text-secondary text-warning-hover"
+                      }`}
+                      role="button"
+                    />
+                  </div>
+                  <button
+                    className="structure-button"
+                    onClick={() => structureText(teamBlueSpeech, true)}
+                    disabled={!teamBlueSpeech || isStructuringBlue}
+                  >
+                    {isStructuringBlue ? 'Structuring...' : 'Structure text using AI'}
+                  </button>
                 </div>
               </div>
             </div>
@@ -631,18 +681,27 @@ function ChatPage() {
                   placeholder="Team White's speech will appear here..."
                   className="team-speech-textarea"
                 />
-                <div 
-                  className="team-speech-mic"
-                  onClick={toggleTeamWhiteListening}
-                >
-                  <i
-                    className={`fas fa-lg fa-microphone ${
-                      isTeamWhiteListening
-                        ? "text-warning text-secondary-hover"
-                        : "text-secondary text-warning-hover"
-                    }`}
-                    role="button"
-                  />
+                <div className="team-speech-controls">
+                  <div 
+                    className="team-speech-mic"
+                    onClick={toggleTeamWhiteListening}
+                  >
+                    <i
+                      className={`fas fa-lg fa-microphone ${
+                        isTeamWhiteListening
+                          ? "text-warning text-secondary-hover"
+                          : "text-secondary text-warning-hover"
+                      }`}
+                      role="button"
+                    />
+                  </div>
+                  <button
+                    className="structure-button"
+                    onClick={() => structureText(teamWhiteSpeech, false)}
+                    disabled={!teamWhiteSpeech || isStructuringWhite}
+                  >
+                    {isStructuringWhite ? 'Structuring...' : 'Structure text using AI'}
+                  </button>
                 </div>
               </div>
             </div>
