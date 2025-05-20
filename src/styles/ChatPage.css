@@ -367,18 +367,6 @@ body {
   background-color: rgba(252, 251, 250, 0.9);
   border-radius: 12px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-  transition: max-height 0.3s ease-in-out;
-  max-height: 1000px;
-  overflow: hidden;
-}
-
-.team-speech-container.collapsed {
-  max-height: 0;
-}
-
-.team-speech-container.collapsed .team-speech-section,
-.team-speech-container.collapsed .merge-speeches-container {
-  display: none;
 }
 
 .team-speech-sections {
