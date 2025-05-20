@@ -360,12 +360,19 @@ body {
 
 .team-speech-container {
   display: flex;
+  flex-direction: column;
   gap: 20px;
   width: 100%;
   padding: 20px;
   background-color: rgba(252, 251, 250, 0.9);
   border-radius: 12px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.team-speech-sections {
+  display: flex;
+  gap: 20px;
+  width: 100%;
 }
 
 .team-speech-section {
@@ -450,8 +457,7 @@ body {
   display: flex;
   justify-content: center;
   width: 100%;
-  margin-top: 20px;
-  padding: 0 20px;
+  padding: 10px 0;
 }
 
 .merge-button {
@@ -479,6 +485,10 @@ body {
 
 @media (max-width: 768px) {
   .team-speech-container {
+    padding: 15px;
+  }
+  
+  .team-speech-sections {
     flex-direction: column;
   }
   

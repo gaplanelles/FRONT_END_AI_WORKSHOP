@@ -737,15 +737,15 @@ function ChatPage() {
                 </div>
               </div>
             </div>
-          </div>
-          <div className="merge-speeches-container">
-            <button
-              className="merge-button"
-              onClick={mergeSpeeches}
-              disabled={!teamBlueSpeech || !teamWhiteSpeech}
-            >
-              Merge Speeches
-            </button>
+            <div className="merge-speeches-container">
+              <button
+                className="merge-button"
+                onClick={mergeSpeeches}
+                disabled={!teamBlueSpeech || !teamWhiteSpeech}
+              >
+                Merge Speeches
+              </button>
+            </div>
           </div>
         </div>
       </div>
