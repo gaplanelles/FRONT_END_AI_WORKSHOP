@@ -7,5 +7,6 @@ export const API_ENDPOINTS = {
   RAG_CONFIG: `${API_BASE_URL}:9007/rag_config`,
   SETUP_RAG_TEMPLATE: `${API_BASE_URL}:9007/setup_rag_template`,
   SETUP_RAG: `${API_BASE_URL}:9007/setup_rag`,
+  STRUCTURING_SPEECH: `${API_BASE_URL}:9007/structuring_speech`,
 };
 

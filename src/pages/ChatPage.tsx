@@ -459,7 +459,7 @@ function ChatPage() {
         setIsStructuringWhite(true);
       }
 
-      const response = await fetch('http://localhost:9007/structuring_speech', {
+      const response = await fetch(API_ENDPOINTS.STRUCTURING_SPEECH, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
