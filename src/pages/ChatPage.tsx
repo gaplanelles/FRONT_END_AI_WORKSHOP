@@ -36,7 +36,7 @@ function ChatPage() {
   const [isTeamWhiteListening, setIsTeamWhiteListening] = useState(false);
   const [isStructuringBlue, setIsStructuringBlue] = useState(false);
   const [isStructuringWhite, setIsStructuringWhite] = useState(false);
-  const [isTeamSpeechCollapsed, setIsTeamSpeechCollapsed] = useState(false);
+  const [isTeamSpeechCollapsed, setIsTeamSpeechCollapsed] = useState(true);
   const chatBoxRef = useRef<any>(null);
   const dataFetchedRef = useRef(false);
   const recognitionRef = useRef<any>(null);

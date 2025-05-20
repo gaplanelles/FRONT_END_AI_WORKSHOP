@@ -358,6 +358,10 @@ body {
   margin-left: 1rem; /* Adjust this value as needed for spacing */
 }
 
+.me-2 {
+  margin-left: 0.5rem; /* Adjust this value as needed for spacing */
+}
+
 .team-speech-container {
   display: flex;
   flex-direction: column;
