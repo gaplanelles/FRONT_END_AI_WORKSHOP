@@ -699,7 +699,7 @@ function ChatPage() {
                       />
                     </div>
                     <button
-                      className="structure-button"
+                      className={`structure-button ${isStructuringBlue ? 'loading' : ''}`}
                       onClick={() => structureText(teamBlueSpeech, true)}
                       disabled={!teamBlueSpeech || isStructuringBlue}
                       title="Structure text using AI"
@@ -735,7 +735,7 @@ function ChatPage() {
                       />
                     </div>
                     <button
-                      className="structure-button"
+                      className={`structure-button ${isStructuringWhite ? 'loading' : ''}`}
                       onClick={() => structureText(teamWhiteSpeech, false)}
                       disabled={!teamWhiteSpeech || isStructuringWhite}
                       title="Structure text using AI"
