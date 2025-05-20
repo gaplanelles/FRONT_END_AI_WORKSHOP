@@ -490,6 +490,32 @@ function ChatPage() {
     }
   };
 
+  const mergeSpeeches = () => {
+    if (teamBlueSpeech && teamWhiteSpeech) {
+      const mergedText = `**Team Blue Speech:**\n${teamBlueSpeech}\n\n**Team White Speech:**\n${teamWhiteSpeech}`;
+      
+      // Add the merged text as a user message
+      const newMessage = { type: "user", content: mergedText };
+      setMessages((prevMessages: any) => [
+        ...prevMessages,
+        newMessage,
+        { type: "system", content: "" },
+      ]);
+
+      // Send the merged text to the chat
+      fetchResponse(
+        mergedText,
+        messages,
+        setMessages,
+        handleStreamResponse
+      );
+
+      // Clear both text areas
+      setTeamBlueSpeech("");
+      setTeamWhiteSpeech("");
+    }
+  };
+
   return (
     <>
       <div className="slide-container">
@@ -705,6 +731,15 @@ function ChatPage() {
                 </div>
               </div>
             </div>
+          </div>
+          <div className="merge-speeches-container">
+            <button
+              className="merge-button"
+              onClick={mergeSpeeches}
+              disabled={!teamBlueSpeech || !teamWhiteSpeech}
+            >
+              Merge Speeches
+            </button>
           </div>
         </div>
       </div>
