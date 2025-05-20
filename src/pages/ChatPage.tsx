@@ -36,6 +36,7 @@ function ChatPage() {
   const [isTeamWhiteListening, setIsTeamWhiteListening] = useState(false);
   const [isStructuringBlue, setIsStructuringBlue] = useState(false);
   const [isStructuringWhite, setIsStructuringWhite] = useState(false);
+  const [isTeamSpeechCollapsed, setIsTeamSpeechCollapsed] = useState(false);
   const chatBoxRef = useRef<any>(null);
   const dataFetchedRef = useRef(false);
   const recognitionRef = useRef<any>(null);
@@ -664,7 +665,16 @@ function ChatPage() {
       </div>
       <div className="d-flex justify-content-center">
         <div className="bottom-section">
-          <div className="team-speech-container">
+          <div className="d-flex justify-content-end mb-2">
+            <button
+              className="btn btn-link"
+              onClick={() => setIsTeamSpeechCollapsed(!isTeamSpeechCollapsed)}
+              title={isTeamSpeechCollapsed ? "Expand team speech" : "Collapse team speech"}
+            >
+              <i className={`fas fa-lg fa-comments ${isTeamSpeechCollapsed ? "text-secondary text-warning-hover" : "text-warning text-secondary-hover"}`} />
+            </button>
+          </div>
+          <div className={`team-speech-container ${isTeamSpeechCollapsed ? "collapsed" : ""}`}>
             <div className="team-speech-section">
               <h3>Team Blue Speech</h3>
               <div className="team-speech-input">
