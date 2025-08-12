@@ -9,18 +9,17 @@ const LoadingOverlay: React.FC<LoadingOverlayProps> = ({
   isLoading,
   children,
 }) => {
-  if (!isLoading) return children;
-
+  // Keep a stable wrapper so child DOM (e.g., <video>) isn't removed during loading toggle.
   return (
     <div className="position-relative">
       {children}
-      {/* Overlay */}
-      <div className="position-absolute top-0 start-0 w-100 h-100 d-flex bg-white opacity-75 justify-content-center align-items-center">
-        {/* Spinner from Bootstrap */}
-        <div className="spinner-border" role="status">
-          <span className="visually-hidden">Loading...</span>
+      {isLoading && (
+        <div className="position-absolute top-0 start-0 w-100 h-100 d-flex bg-white opacity-75 justify-content-center align-items-center">
+          <div className="spinner-border" role="status">
+            <span className="visually-hidden">Loading...</span>
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 };

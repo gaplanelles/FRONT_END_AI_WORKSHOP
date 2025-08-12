@@ -87,9 +87,35 @@ const OAvatar: React.FC<{
   const initializeAvatarSession = async () => {
     try {
       setIsLoadingAvatar(true);
+      // Ensure any previous instance is fully stopped before starting a new one
+      if (avatar) {
+        try {
+          await avatar.stopAvatar();
+        } catch (e) {
+          // swallow unauthorized/invalid state errors
+          // eslint-disable-next-line no-console
+          console.warn("Stopping previous avatar before init failed (continuing)", e);
+        }
+        if (videoRef.current) {
+          videoRef.current.srcObject = null;
+        }
+        setAvatar(null);
+      }
       const token = await fetchAccessToken();
+      if (!token) {
+        console.error("HeyGen access token missing; aborting avatar start");
+        setIsLoadingAvatar(false);
+        return;
+      }
       const newAvatar = new StreamingAvatar({ token });
       setAvatar(newAvatar);
+
+      // Attach listeners BEFORE starting the avatar to avoid missing early events
+      newAvatar.on(StreamingEvents.STREAM_READY, handleStreamReady);
+      newAvatar.on(
+        StreamingEvents.STREAM_DISCONNECTED,
+        handleStreamDisconnected
+      );
 
       const data = await newAvatar.createStartAvatar({
         quality: AvatarQuality.High,
@@ -106,12 +132,6 @@ const OAvatar: React.FC<{
 
       setSessionData(data);
       setIsSessionActive(true);
-
-      newAvatar.on(StreamingEvents.STREAM_READY, handleStreamReady);
-      newAvatar.on(
-        StreamingEvents.STREAM_DISCONNECTED,
-        handleStreamDisconnected
-      );
       setIsLoadingAvatar(false);
     } catch (error) {
       console.error("Error initializing avatar session:", error);
@@ -121,10 +141,24 @@ const OAvatar: React.FC<{
 
   const handleStreamReady = (event: any) => {
     if (event.detail && videoRef.current) {
+      // If overlay was hiding the video, keep the element mounted to avoid detachment mid-play
+      // Attach MediaStream and try to play
       videoRef.current.srcObject = event.detail;
+      // Ensure autoplay policies don't block playback
+      videoRef.current.autoplay = true;
+      videoRef.current.playsInline = true;
+      videoRef.current.muted = true; // allow autoplay on mobile/web
       videoRef.current.onloadedmetadata = () => {
         videoRef.current?.play().catch(console.error);
       };
+      // Retry play shortly in case of race conditions
+      setTimeout(() => {
+        videoRef.current?.play().catch(() => {});
+      }, 250);
+      // Additional retry in case track arrives a bit later
+      setTimeout(() => {
+        videoRef.current?.play().catch(() => {});
+      }, 750);
     }
   };
 
@@ -136,7 +170,7 @@ const OAvatar: React.FC<{
   };
 
   const terminateAvatarSession = async () => {
-    if (avatar && sessionData && isSessionActive) {
+    if (avatar) {
       try {
         await avatar.stopAvatar();
         if (videoRef.current) {
@@ -206,6 +240,8 @@ const OAvatar: React.FC<{
                     id="avatarVideo"
                     className="avatar-video"
                     controls={true}
+                    autoPlay
+                    muted
                     playsInline
                 />
             </div>
