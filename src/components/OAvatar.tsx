@@ -190,7 +190,7 @@ const OAvatar: React.FC<{
       const data = await response.json();
       console.log("data");
       console.log(data);
-      const newText = data.value;
+      const newText = data.response;
 
       if (newText !== lastReadText && avatar) {
         setLastReadText(newText);
