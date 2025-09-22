@@ -148,7 +148,7 @@ const OAvatar: React.FC<{ isVideoEnabled: boolean }> = ({ isVideoEnabled }) => {
     try {
       const response = await fetch(`${llmApiUrl}/get_string`);
       const data = await response.json();
-      const newText = data.value;
+      const newText = data.response;
 
       if (newText !== lastReadText && avatar) {
         setLastReadText(newText);
