@@ -15,7 +15,7 @@ const Header: React.FC = () => {
                 className="oracle-logo"
               />
               <img
-                src="/aion_image/logo.png"
+                src="../aion_image/logo.png"
                 alt="Aion Logo"
                 className="aion-logo"
               />
