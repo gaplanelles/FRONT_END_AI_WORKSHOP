@@ -148,6 +148,7 @@ const OAvatar: React.FC<{ isVideoEnabled: boolean }> = ({ isVideoEnabled }) => {
     try {
       const response = await fetch(`${llmApiUrl}/get_string`);
       const data = await response.json();
+      console.log("data");
       console.log(data);
       const newText = data.response;
 
