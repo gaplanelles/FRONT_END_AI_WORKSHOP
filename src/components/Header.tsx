@@ -1,7 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import "../styles/Header.css";
-import logo from "../aion_image/logo.png";
+import logo from "../../aion_image/logo.png";
 
 const Header: React.FC = () => {
   return (
