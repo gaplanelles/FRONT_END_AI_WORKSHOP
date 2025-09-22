@@ -15,11 +15,6 @@ const Header: React.FC = () => {
                 alt="Oracle"
                 className="oracle-logo"
               />
-              <img
-                src="../../public/images/logo.png"
-                alt="Aion Logo"
-                className="aion-logo"
-              />
             </div>
           </Link>
         </div>
