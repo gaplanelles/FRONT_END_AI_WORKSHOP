@@ -1,4 +1,4 @@
-const API_BASE_URL = 'http://139.185.59.9';
+const API_BASE_URL = 'https://139.185.59.9';
 
 export const API_ENDPOINTS = {
   ASK: `${API_BASE_URL}:9001/ask`,
