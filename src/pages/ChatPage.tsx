@@ -529,7 +529,7 @@ function ChatPage() {
               <div className="container">
                 <div className="mb-3 d-flex justify-content-between">
                   <div />
-                  <div>AI Chat</div>
+                  <div>AION Chat</div>
                   <div className="d-flex">
                     {isVideoActive && (
                       <div
