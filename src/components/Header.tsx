@@ -1,6 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import "../styles/Header.css";
+import logo from "../aion_image/logo.png";
 
 const Header: React.FC = () => {
   return (
@@ -15,7 +16,7 @@ const Header: React.FC = () => {
                 className="oracle-logo"
               />
               <img
-                src="../aion_image/logo.png"
+                src={logo}
                 alt="Aion Logo"
                 className="aion-logo"
               />
