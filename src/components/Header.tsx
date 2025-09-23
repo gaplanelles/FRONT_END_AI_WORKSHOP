@@ -17,8 +17,6 @@ const Header: React.FC = () => {
               />
             </div>
           </Link>
-        </div>
-        <div className="header-right">
           <img
             src="/images/logo.png"
             alt="AION"
@@ -30,6 +28,7 @@ const Header: React.FC = () => {
           <Link to="/setup" className="nav-link">Setup</Link>
           <Link to="/chat" className="nav-link">Chat</Link>
         </nav>
+        <div className="header-right" />
 
       </div>
     </header>
