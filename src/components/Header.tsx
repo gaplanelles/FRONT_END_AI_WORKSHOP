@@ -18,11 +18,6 @@ const Header: React.FC = () => {
             </div>
           </Link>
         </div>
-        <nav className="header-nav">
-          <Link to="/" className="nav-link">Home</Link>
-          <Link to="/setup" className="nav-link">Setup</Link>
-          <Link to="/chat" className="nav-link">Chat</Link>
-        </nav>
         <div className="header-right">
           <img
             src="/images/logo.png"
@@ -30,6 +25,12 @@ const Header: React.FC = () => {
             className="aion-logo"
           />
         </div>
+        <nav className="header-nav">
+          <Link to="/" className="nav-link">Home</Link>
+          <Link to="/setup" className="nav-link">Setup</Link>
+          <Link to="/chat" className="nav-link">Chat</Link>
+        </nav>
+
       </div>
     </header>
   );
