@@ -87,7 +87,7 @@ body {
   margin-top: 10px;
 }
 
-.oracle-logo {
+.chat-page-container .oracle-logo {
   display: block;
   margin: auto;
   max-width: 150px;
@@ -280,10 +280,7 @@ body {
   overflow-y: auto;
 }
 
-.sidebar > *, .sources-display > * {
-  /* flex: 1; */
-  /* overflow-y: auto; */
-}
+/* Removed empty ruleset: .sidebar > *, .sources-display > * */
 
 
 @media (max-width: 768px) {
@@ -546,11 +543,4 @@ body {
     font-size: 14px;
   }
 }
-.logo-wrapper {
-    background-image: url('../../public/images/logo.png');
-    background-size: contain;
-    background-repeat: no-repeat;
-    width: 100px; /* Adjust the width as needed */
-    height: 50px; /* Adjust the height as needed */
-    display: inline-block; /* Ensure it displays correctly */
-}
+/* Removed global .logo-wrapper to avoid header conflicts */

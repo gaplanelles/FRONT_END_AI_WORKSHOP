@@ -11,6 +11,7 @@
 .header-content {
   display: flex;
   align-items: center;
+  justify-content: space-between;
   width: 100%;
   max-width: 1300px;
   margin: 0 auto;
@@ -27,7 +28,7 @@
   text-decoration: none;
 }
 
-.logo-wrapper {
+.header-logo-wrapper {
   display: flex;
   align-items: center;
   height: 100%;
@@ -41,7 +42,8 @@
 .header-nav {
   display: flex;
   align-items: center;
-  justify-content: flex-start;
+  justify-content: center;
+  flex: 1;
 }
 
 .nav-link {
@@ -93,6 +95,12 @@
 
 .oracle-logo {
   height: 30px;
+  width: auto;
+  display: block;
+}
+
+.aion-logo {
+  height: 28px;
   width: auto;
   display: block;
 }

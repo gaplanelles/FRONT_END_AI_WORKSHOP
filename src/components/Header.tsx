@@ -9,7 +9,7 @@ const Header: React.FC = () => {
       <div className="header-content">
         <div className="header-left">
           <Link to="/" className="logo">
-            <div className="logo-wrapper">
+            <div className="header-logo-wrapper">
               <img
                 src="https://upload.wikimedia.org/wikipedia/commons/5/50/Oracle_logo.svg"
                 alt="Oracle"
@@ -24,7 +24,11 @@ const Header: React.FC = () => {
           <Link to="/chat" className="nav-link">Chat</Link>
         </nav>
         <div className="header-right">
-          {/* <button className="sign-in-button">Sign In</button> */}
+          <img
+            src="/images/logo.png"
+            alt="AION"
+            className="aion-logo"
+          />
         </div>
       </div>
     </header>
