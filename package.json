@@ -10,6 +10,7 @@
     "eject": "react-scripts eject"
   },
   "dependencies": {
+    "@heygen/liveavatar-web-sdk": "^0.0.10",
     "@heygen/streaming-avatar": "^2.0.8",
     "@preact/signals-react": "^3.0.0",
     "@types/react": "^19.0.2",

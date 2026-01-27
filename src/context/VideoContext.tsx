@@ -1,4 +1,5 @@
 import StreamingAvatar from '@heygen/streaming-avatar';
+import { LiveAvatarSession } from '@heygen/liveavatar-web-sdk';
 import React, { createContext, useContext, useState } from 'react';
 
 interface VideoContextProps {
@@ -6,8 +7,8 @@ interface VideoContextProps {
   isVideoActive: boolean;
   toggleVideo: () => void;
   setIsVideoActive: (flag: boolean) => void;
-  avatar: StreamingAvatar | null;
-  setAvatar: (avatar: StreamingAvatar | null) => void;
+  avatar: StreamingAvatar | LiveAvatarSession | null;
+  setAvatar: (avatar: StreamingAvatar | LiveAvatarSession | null) => void;
 }
 
 const VideoContext = createContext<VideoContextProps | undefined>(undefined);
@@ -17,7 +18,7 @@ interface VideoProviderProps {
 }
 
 export const VideoProvider: React.FC<VideoProviderProps> = ({ children }) => {
-  const [avatar, setAvatar] = useState<StreamingAvatar | null>(null);
+  const [avatar, setAvatar] = useState<StreamingAvatar | LiveAvatarSession | null>(null);
   const [isVideoEnabled, setIsVideoEnabled] = useState(false);
   const [isVideoActive, setIsVideoActive] = useState(false);
 

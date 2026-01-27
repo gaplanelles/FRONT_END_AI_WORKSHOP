@@ -7,6 +7,7 @@ import StreamingAvatar, {
   TaskType,
   VoiceEmotion,
 } from "@heygen/streaming-avatar";
+import { LiveAvatarSession, SessionEvent, AgentEventsEnum } from "@heygen/liveavatar-web-sdk";
 import LoadingOverlay from "./LoadingOverlay";
 import { useTranscription } from "../context/TranscriptionContext";
 import { isListeningButtonEnabled, isTalkingActive } from "../pages/ChatPage";
@@ -24,14 +25,13 @@ const OAvatar: React.FC<{
 }> = ({ isVideoEnabled }) => {
   const videoRef = useRef<HTMLVideoElement>(null);
   // const [avatar, setAvatar] = useState<StreamingAvatar | null>(null);
-  const [sessionData, setSessionData] = useState<any>(null);
   const [lastReadText, setLastReadText] = useState("");
   const [isSessionActive, setIsSessionActive] = useState(false);
   const [isLoadingAvatar, setIsLoadingAvatar] = useState(false);
   const { stopListening, restartListening } = useTranscription();
   const { avatar, setAvatar, setIsVideoActive } = useVideo();
 
- 
+
 
 
   useEffect(() => {
@@ -44,40 +44,63 @@ const OAvatar: React.FC<{
 
   useEffect(() => {
     console.log("isListeningEnabled", isListeningButtonEnabled.value);
-    avatar?.on(StreamingEvents.AVATAR_START_TALKING, () => {
+
+    const onStartTalking = () => {
       setIsVideoActive(true);
-      console.log(
-        "StreamingEvents.AVATAR_START_TALKING",
-        isListeningButtonEnabled.value
-      );
+      console.log("AVATAR_START_TALKING", isListeningButtonEnabled.value);
       if (isListeningButtonEnabled.value) {
         stopListening();
       }
-    });
-    avatar?.on(StreamingEvents.AVATAR_STOP_TALKING, () => {
+    };
+
+    const onStopTalking = () => {
       setIsVideoActive(false);
-      console.log(
-        "StreamingEvents.AVATAR_STOP_TALKING",
-        isListeningButtonEnabled.value
-      );
+      console.log("AVATAR_STOP_TALKING", isListeningButtonEnabled.value);
       if (isListeningButtonEnabled.value) {
         restartListening();
       }
-    });
+    };
+
+    if (avatar instanceof StreamingAvatar) {
+      avatar.on(StreamingEvents.AVATAR_START_TALKING, onStartTalking);
+      avatar.on(StreamingEvents.AVATAR_STOP_TALKING, onStopTalking);
+    } else if (avatar instanceof LiveAvatarSession) {
+      avatar.on(AgentEventsEnum.AVATAR_SPEAK_STARTED, onStartTalking);
+      avatar.on(AgentEventsEnum.AVATAR_SPEAK_ENDED, onStopTalking);
+    }
+
+    return () => {
+      if (avatar instanceof StreamingAvatar) {
+        avatar.off(StreamingEvents.AVATAR_START_TALKING, onStartTalking);
+        avatar.off(StreamingEvents.AVATAR_STOP_TALKING, onStopTalking);
+      } else if (avatar instanceof LiveAvatarSession) {
+        avatar.off(AgentEventsEnum.AVATAR_SPEAK_STARTED, onStartTalking);
+        avatar.off(AgentEventsEnum.AVATAR_SPEAK_ENDED, onStopTalking);
+      }
+    };
   }, [avatar]);
 
   const fetchAccessToken = async (): Promise<string> => {
     try {
-      const response = await fetch(`${hygenApiUrl}/streaming.create_token`, {
+      const response = await fetch(`${hygenApiUrl}/sessions/token`, {
         method: "POST",
         headers: {
           "x-api-key": hygenApiKey || "",
           "Content-Type": "application/json",
           accept: "application/json",
         },
+        body: JSON.stringify({
+          mode: "FULL",
+          avatar_id: avatarName,
+          avatar_persona: {
+            voice_id: process.env.REACT_APP_HEYGEN_VOICE_ID || "864a26b8-bfba-4435-9cc5-1dd593de5ca7"
+          },
+          is_sandbox: false,
+          quality: "high"
+        })
       });
       const { data } = await response.json();
-      return data.token;
+      return data.session_token;
     } catch (e) {
       setIsLoadingAvatar(false);
       return "";
@@ -87,50 +110,56 @@ const OAvatar: React.FC<{
   const initializeAvatarSession = async () => {
     try {
       setIsLoadingAvatar(true);
-      // Ensure any previous instance is fully stopped before starting a new one
       if (avatar) {
         try {
-          await avatar.stopAvatar();
+          if (avatar instanceof StreamingAvatar) {
+            await avatar.stopAvatar();
+          } else {
+            await avatar.stop();
+          }
         } catch (e) {
-          // swallow unauthorized/invalid state errors
-          // eslint-disable-next-line no-console
-          console.warn("Stopping previous avatar before init failed (continuing)", e);
+          console.warn("Stopping previous avatar failed", e);
         }
         if (videoRef.current) {
           videoRef.current.srcObject = null;
         }
         setAvatar(null);
       }
+
       const token = await fetchAccessToken();
       if (!token) {
         console.error("HeyGen access token missing; aborting avatar start");
         setIsLoadingAvatar(false);
         return;
       }
-      const newAvatar = new StreamingAvatar({ token });
+
+      // Using LiveAvatarSession (New SDK)
+      const newAvatar = new LiveAvatarSession(token);
       setAvatar(newAvatar);
 
-      // Attach listeners BEFORE starting the avatar to avoid missing early events
-      newAvatar.on(StreamingEvents.STREAM_READY, handleStreamReady);
-      newAvatar.on(
-        StreamingEvents.STREAM_DISCONNECTED,
-        handleStreamDisconnected
-      );
+      // We define a local onStreamReady to avoid race conditions with the 'avatar' state variable
+      const onStreamReady = async () => {
+        console.log("Stream ready! Attaching...");
+        if (videoRef.current) {
+          newAvatar.attach(videoRef.current);
+        }
 
-      const data = await newAvatar.createStartAvatar({
-        quality: AvatarQuality.High,
-        voice:   {
-          //rate: 1.1, //spanish pure
-          rate: 0.9,
-          emotion : VoiceEmotion.FRIENDLY,
-          //voiceId: "011af09cedd141feb57eafa51e5e98f9", //Serbian: 511ffd086a904ef593b608032004112c Spanish(multilingual): 011af09cedd141feb57eafa51e5e98f9, a78e0a4dbbe247d0a704b91175e6d987, Spanish (pure: a78e0a4dbbe247d0a704b91175e6d987)
+        // Add a slight delay to ensure the audio track is fully initialized
+        setTimeout(async () => {
+          try {
+            console.log("Announcing connection...");
+            await newAvatar.repeat("estableciendo conexión con el backend...");
+          } catch (e) {
+            console.warn("Announcement failed", e);
+          }
+        }, 1000);
+      };
 
-        },
-        avatarName: avatarName || "avatar",
-        disableIdleTimeout: false
-      });
+      newAvatar.on(SessionEvent.SESSION_STREAM_READY, onStreamReady);
+      newAvatar.on(SessionEvent.SESSION_DISCONNECTED, handleStreamDisconnected);
 
-      setSessionData(data);
+      await newAvatar.start();
+
       setIsSessionActive(true);
       setIsLoadingAvatar(false);
     } catch (error) {
@@ -139,26 +168,9 @@ const OAvatar: React.FC<{
     }
   };
 
-  const handleStreamReady = (event: any) => {
-    if (event.detail && videoRef.current) {
-      // If overlay was hiding the video, keep the element mounted to avoid detachment mid-play
-      // Attach MediaStream and try to play
-      videoRef.current.srcObject = event.detail;
-      // Ensure autoplay policies don't block playback
-      videoRef.current.autoplay = true;
-      videoRef.current.playsInline = true;
-      videoRef.current.muted = true; // allow autoplay on mobile/web
-      videoRef.current.onloadedmetadata = () => {
-        videoRef.current?.play().catch(console.error);
-      };
-      // Retry play shortly in case of race conditions
-      setTimeout(() => {
-        videoRef.current?.play().catch(() => {});
-      }, 250);
-      // Additional retry in case track arrives a bit later
-      setTimeout(() => {
-        videoRef.current?.play().catch(() => {});
-      }, 750);
+  const handleStreamReady = () => {
+    if (avatar instanceof LiveAvatarSession && videoRef.current) {
+      avatar.attach(videoRef.current);
     }
   };
 
@@ -172,7 +184,11 @@ const OAvatar: React.FC<{
   const terminateAvatarSession = async () => {
     if (avatar) {
       try {
-        await avatar.stopAvatar();
+        if (avatar instanceof StreamingAvatar) {
+          await avatar.stopAvatar();
+        } else if (avatar instanceof LiveAvatarSession) {
+          await avatar.stop();
+        }
         if (videoRef.current) {
           videoRef.current.srcObject = null;
         }
@@ -187,19 +203,37 @@ const OAvatar: React.FC<{
   const fetchAndReadText = async () => {
     try {
       const response = await fetch(`${llmApiUrl}/get_string`);
+      if (!response.ok) throw new Error("Fetch failed");
       const data = await response.json();
       const newText = data.value;
 
-      if (newText !== lastReadText && avatar) {
+      if (newText && newText !== lastReadText && avatar) {
         setLastReadText(newText);
-        await avatar.speak({
-          text: newText,
-          task_type: TaskType.REPEAT,
-          taskMode: TaskMode.SYNC,
-        });
+        if (avatar instanceof StreamingAvatar) {
+          await avatar.speak({
+            text: newText,
+            task_type: TaskType.REPEAT,
+            taskMode: TaskMode.SYNC,
+          });
+        } else if (avatar instanceof LiveAvatarSession) {
+          await avatar.repeat(newText);
+        }
       }
     } catch (error) {
       console.error("Error fetching text:", error);
+      const errorMessage = "Parece que hay un error recuperando el mensaje del back end";
+      if (avatar && lastReadText !== errorMessage) {
+        setLastReadText(errorMessage);
+        if (avatar instanceof StreamingAvatar) {
+          await avatar.speak({
+            text: errorMessage,
+            task_type: TaskType.REPEAT,
+            taskMode: TaskMode.SYNC,
+          }).catch(console.error);
+        } else if (avatar instanceof LiveAvatarSession) {
+          await avatar.repeat(errorMessage);
+        }
+      }
     }
   };
 
@@ -220,7 +254,11 @@ const OAvatar: React.FC<{
     return () => {
       try {
         if (avatar) {
-          avatar.stopAvatar().then(() => {}, console.error).catch(console.error);
+          if (avatar instanceof StreamingAvatar) {
+            avatar.stopAvatar().catch(console.error);
+          } else if (avatar instanceof LiveAvatarSession) {
+            avatar.stop().catch(console.error);
+          }
           setAvatar(null);
           setIsSessionActive(false);
           setIsVideoActive(false);
@@ -233,20 +271,20 @@ const OAvatar: React.FC<{
 
   return (
 
-        <LoadingOverlay isLoading={isLoadingAvatar}>
-            <div className="avatar-container">
-                <video
-                    ref={videoRef}
-                    id="avatarVideo"
-                    className="avatar-video"
-                    controls={true}
-                    autoPlay
-                    muted
-                    playsInline
-                />
-            </div>
+    <LoadingOverlay isLoading={isLoadingAvatar}>
+      <div className="avatar-container">
+        <video
+          ref={videoRef}
+          id="avatarVideo"
+          className="avatar-video"
+          controls={true}
+          autoPlay
+          muted
+          playsInline
+        />
+      </div>
 
-        </LoadingOverlay>
+    </LoadingOverlay>
 
 
   );

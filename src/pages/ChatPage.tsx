@@ -17,6 +17,7 @@ import {
 import { TaskMode, TaskType } from "@heygen/streaming-avatar";
 import ReactMarkdown from 'react-markdown';
 import StreamingAvatar, { AvatarQuality, VoiceEmotion, StreamingEvents } from "@heygen/streaming-avatar";
+import { LiveAvatarSession } from "@heygen/liveavatar-web-sdk";
 import VideoCam from "../components/videoCam";
 
 export const isListeningButtonEnabled = signal(false);
@@ -247,11 +248,15 @@ function ChatPage() {
   async function speakingByAvatar(content: any) {
     if (avatar) {
       try {
-        await avatar.speak({
-          text: content,
-          task_type: TaskType.REPEAT,
-          taskMode: TaskMode.SYNC,
-        });
+        if (avatar instanceof StreamingAvatar) {
+          await avatar.speak({
+            text: content,
+            task_type: TaskType.REPEAT,
+            taskMode: TaskMode.SYNC,
+          });
+        } else if (avatar instanceof LiveAvatarSession) {
+          await avatar.repeat(content);
+        }
       } catch (error: any) {
         console.error("Avatar speaking error:", error);
         if (error.message?.includes("401")) {
@@ -272,7 +277,7 @@ function ChatPage() {
       .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>') // Convert **bold** to <strong>
       .replace(/- (.+)/g, '<li>$1</li>') // Convert list items
       .replace(/(?:\r\n|\r|\n)/g, '<br>'); // Convert new lines to <br>
-    
+
     return { __html: `<ul>${formattedContent}</ul>` };
   };
 
@@ -280,13 +285,22 @@ function ChatPage() {
     try {
       console.log("Heygen API KEY")
       console.log(process.env.REACT_APP_HEYGEN_API_KEY)
-      const response = await fetch(`${process.env.REACT_APP_HEYGEN_API_URL}/streaming.create_token`, {
+      const response = await fetch(`${process.env.REACT_APP_HEYGEN_API_URL}/sessions/token`, {
         method: "POST",
         headers: {
           "x-api-key": process.env.REACT_APP_HEYGEN_API_KEY || "",
           "Content-Type": "application/json",
           accept: "application/json",
         },
+        body: JSON.stringify({
+          mode: "FULL",
+          avatar_id: process.env.REACT_APP_HEGYGEN_AVATAR_NAME,
+          avatar_persona: {
+            voice_id: process.env.REACT_APP_HEYGEN_VOICE_ID || "864a26b8-bfba-4435-9cc5-1dd593de5ca7"
+          },
+          is_sandbox: false,
+          quality: "high"
+        })
       });
 
       if (!response.ok) {
@@ -294,7 +308,7 @@ function ChatPage() {
       }
 
       const { data } = await response.json();
-      return data.token;
+      return data.session_token;
     } catch (error) {
       console.error("Error fetching access token:", error);
       throw error;
@@ -304,9 +318,10 @@ function ChatPage() {
   const avatarName = process.env.REACT_APP_HEGYGEN_AVATAR_NAME;
 
   const handleRobotButtonClick = async () => {
-    if (isVideoEnabled && avatar?.mediaStream) {
+    const isAvActive = avatar instanceof StreamingAvatar ? !!(avatar as StreamingAvatar).mediaStream : (avatar instanceof LiveAvatarSession && isVideoActive);
+    if (isVideoEnabled && isAvActive) {
       try {
-        await avatar.interrupt();
+        await avatar?.interrupt();
       } catch (error) {
         if (error instanceof Error && 'code' in error && (error as any).code === 400112) {
           console.warn("Unauthorized error while interrupting avatar, continuing...");
@@ -327,7 +342,11 @@ function ChatPage() {
       // Stop the avatar if it's active
       if (avatar) {
         try {
-          await avatar.stopAvatar();
+          if (avatar instanceof StreamingAvatar) {
+            await avatar.stopAvatar();
+          } else if (avatar instanceof LiveAvatarSession) {
+            await avatar.stop();
+          }
         } catch (error) {
           if (error instanceof Error && 'code' in error && (error as any).code === 400112) {
             console.warn("Unauthorized error while stopping avatar, continuing...");
@@ -473,7 +492,7 @@ function ChatPage() {
       }
 
       const data = await response.json();
-      
+
       if (isBlue) {
         setTeamBlueSpeech(data.structured_speech || '');
       } else {
@@ -494,7 +513,7 @@ function ChatPage() {
   const mergeSpeeches = () => {
     if (teamBlueSpeech && teamWhiteSpeech) {
       const mergedText = `**Team Blue Speech:**\n\n${teamBlueSpeech}\n\n**Team White Speech:**\n\n${teamWhiteSpeech}`;
-      
+
       // Add the merged text as a user message
       const newMessage = { type: "user", content: mergedText };
       setMessages((prevMessages: any) => [
@@ -536,7 +555,8 @@ function ChatPage() {
                         className="me-3"
                         onClick={() => {
                           setIsVideoActive(false);
-                          if (avatar?.mediaStream) {
+                          const isAvActive = avatar instanceof StreamingAvatar ? !!(avatar as StreamingAvatar).mediaStream : (avatar instanceof LiveAvatarSession && isVideoActive);
+                          if (isAvActive) {
                             try {
                               avatar?.interrupt();
                             } catch (e) {
@@ -566,17 +586,16 @@ function ChatPage() {
                     >
                       <i className="fas fa-lg fa-satellite text-secondary text-warning-hover" />
                     </div>
-                    
+
                     <div
                       onClick={handleRobotButtonClick}
                       className="me-2"
                     >
                       <i
-                        className={`fas fa-lg fa-robot  ${
-                          isVideoEnabled
-                            ? "text-warning text-secondary-hover"
-                            : "text-secondary text-warning-hover"
-                        } `}
+                        className={`fas fa-lg fa-robot  ${isVideoEnabled
+                          ? "text-warning text-secondary-hover"
+                          : "text-secondary text-warning-hover"
+                          } `}
                         role="button"
                       />
                     </div>
@@ -624,11 +643,10 @@ function ChatPage() {
                   </button>
                   <div className="ms-2" onClick={toggleListeningEnabled}>
                     <i
-                      className={`fas fa-lg fa-microphone ${
-                        isListeningButtonEnabled.value
-                          ? "text-warning text-secondary-hover"
-                          : "text-secondary text-warning-hover"
-                      } `}
+                      className={`fas fa-lg fa-microphone ${isListeningButtonEnabled.value
+                        ? "text-warning text-secondary-hover"
+                        : "text-secondary text-warning-hover"
+                        } `}
                       role="button"
                     />
                   </div>
@@ -661,10 +679,10 @@ function ChatPage() {
                   </div>
                 </div>
                 {isCameraVisible && <VideoCam />}
-                
-                
-                
-               
+
+
+
+
 
               </div>
             </div>
@@ -685,16 +703,15 @@ function ChatPage() {
                     className="team-speech-textarea"
                   />
                   <div className="team-speech-controls">
-                    <div 
+                    <div
                       className="team-speech-mic"
                       onClick={toggleTeamBlueListening}
                     >
                       <i
-                        className={`fas fa-lg fa-microphone ${
-                          isTeamBlueListening
-                            ? "text-warning text-secondary-hover"
-                            : "text-secondary text-warning-hover"
-                        }`}
+                        className={`fas fa-lg fa-microphone ${isTeamBlueListening
+                          ? "text-warning text-secondary-hover"
+                          : "text-secondary text-warning-hover"
+                          }`}
                         role="button"
                       />
                     </div>
@@ -721,16 +738,15 @@ function ChatPage() {
                     className="team-speech-textarea"
                   />
                   <div className="team-speech-controls">
-                    <div 
+                    <div
                       className="team-speech-mic"
                       onClick={toggleTeamWhiteListening}
                     >
                       <i
-                        className={`fas fa-lg fa-microphone ${
-                          isTeamWhiteListening
-                            ? "text-warning text-secondary-hover"
-                            : "text-secondary text-warning-hover"
-                        }`}
+                        className={`fas fa-lg fa-microphone ${isTeamWhiteListening
+                          ? "text-warning text-secondary-hover"
+                          : "text-secondary text-warning-hover"
+                          }`}
                         role="button"
                       />
                     </div>
