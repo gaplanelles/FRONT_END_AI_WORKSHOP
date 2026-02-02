@@ -298,7 +298,7 @@ function ChatPage() {
         },
         body: JSON.stringify({
           mode: "FULL",
-          avatar_id: process.env.REACT_APP_HEGYGEN_AVATAR_NAME,
+          avatar_id: process.env.REACT_APP_HEYGEN_AVATAR_NAME,
           avatar_persona: {
             voice_id: process.env.REACT_APP_HEYGEN_VOICE_ID || "864a26b8-bfba-4435-9cc5-1dd593de5ca7"
           },
@@ -319,7 +319,7 @@ function ChatPage() {
     }
   };
 
-  const avatarName = process.env.REACT_APP_HEGYGEN_AVATAR_NAME;
+  const avatarName = process.env.REACT_APP_HEYGEN_AVATAR_NAME;
 
   const handleRobotButtonClick = async () => {
     const isAvActive = avatar instanceof StreamingAvatar ? !!(avatar as StreamingAvatar).mediaStream : (avatar instanceof LiveAvatarSession && isVideoActive);

@@ -18,7 +18,7 @@ import { useVideo } from "../context/VideoContext";
 const heygenApiKey = process.env.REACT_APP_HEYGEN_API_KEY;
 const heygenApiUrl = process.env.REACT_APP_HEYGEN_API_URL;
 const llmApiUrl = process.env.REACT_APP_LLM_API_URL;
-const avatarName = process.env.REACT_APP_HEGYGEN_AVATAR_NAME;
+const avatarName = process.env.REACT_APP_HEYGEN_AVATAR_NAME;
 
 const OAvatar: React.FC<{
   isVideoEnabled: boolean;
