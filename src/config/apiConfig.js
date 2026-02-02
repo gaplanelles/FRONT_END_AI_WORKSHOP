@@ -1,12 +1,21 @@
-const API_BASE_URL = 'https://81.208.173.145';
+export const HEYGEN_CONFIG = {
+  API_URL: process.env.REACT_APP_HEYGEN_API_URL || "https://api.liveavatar.com/v1",
+  API_KEY: process.env.REACT_APP_HEYGEN_API_KEY || "688262f0-6d8b-4a53-83e5-fc1875bce08e",
+  AVATAR_NAME: process.env.REACT_APP_HEYGEN_AVATAR_NAME || "073b60a9-89a8-45aa-8902-c358f64d2852",
+  VOICE_ID: process.env.REACT_APP_HEYGEN_VOICE_ID || "864a26b8-bfba-4435-9cc5-1dd593de5ca7",
+};
+
+export const LLM_CONFIG = {
+  API_URL: process.env.REACT_APP_LLM_API_URL || "https://81.208.173.145:9007",
+};
 
 export const API_ENDPOINTS = {
-  ASK: `${API_BASE_URL}:9007/ask`,
-  INIT: `${API_BASE_URL}:9007/init`,
-  CLEAN_CONVERSATION: `${API_BASE_URL}:9007/clean_conversation`,
-  RAG_CONFIG: `${API_BASE_URL}:9007/rag_config`,
-  SETUP_RAG_TEMPLATE: `${API_BASE_URL}:9007/setup_rag_template`,
-  SETUP_RAG: `${API_BASE_URL}:9007/setup_rag`,
-  STRUCTURING_SPEECH: `${API_BASE_URL}:9007/structuring_speech`,
+  ASK: `${LLM_CONFIG.API_URL}/ask`,
+  INIT: `${LLM_CONFIG.API_URL}/init`,
+  CLEAN_CONVERSATION: `${LLM_CONFIG.API_URL}/clean_conversation`,
+  RAG_CONFIG: `${LLM_CONFIG.API_URL}/rag_config`,
+  SETUP_RAG_TEMPLATE: `${LLM_CONFIG.API_URL}/setup_rag_template`,
+  SETUP_RAG: `${LLM_CONFIG.API_URL}/setup_rag`,
+  STRUCTURING_SPEECH: `${LLM_CONFIG.API_URL}/structuring_speech`,
 };
 

@@ -9,16 +9,10 @@ import StreamingAvatar, {
 } from "@heygen/streaming-avatar";
 import { LiveAvatarSession, SessionEvent, AgentEventsEnum } from "@heygen/liveavatar-web-sdk";
 import LoadingOverlay from "./LoadingOverlay";
+import { HEYGEN_CONFIG, LLM_CONFIG } from "../config/apiConfig";
 import { useTranscription } from "../context/TranscriptionContext";
 import { isListeningButtonEnabled, isTalkingActive } from "../pages/ChatPage";
 import { useVideo } from "../context/VideoContext";
-
-
-
-const heygenApiKey = process.env.REACT_APP_HEYGEN_API_KEY;
-const heygenApiUrl = process.env.REACT_APP_HEYGEN_API_URL;
-const llmApiUrl = process.env.REACT_APP_LLM_API_URL;
-const avatarName = process.env.REACT_APP_HEYGEN_AVATAR_NAME;
 
 const OAvatar: React.FC<{
   isVideoEnabled: boolean;
@@ -82,29 +76,25 @@ const OAvatar: React.FC<{
 
   const fetchAccessToken = async (): Promise<string> => {
     try {
-      if (!heygenApiUrl || heygenApiUrl === 'undefined') {
-        console.error("REACT_APP_HEYGEN_API_URL is not defined");
-        return "";
-      }
-      const response = await fetch(`${heygenApiUrl}/sessions/token`, {
+      const response = await fetch(`${HEYGEN_CONFIG.API_URL}/sessions/token`, {
         method: "POST",
         headers: {
-          "x-api-key": heygenApiKey || "",
+          "x-api-key": HEYGEN_CONFIG.API_KEY,
           "Content-Type": "application/json",
           accept: "application/json",
         },
         body: JSON.stringify({
           mode: "FULL",
-          avatar_id: avatarName,
+          avatar_id: HEYGEN_CONFIG.AVATAR_NAME,
           avatar_persona: {
-            voice_id: process.env.REACT_APP_HEYGEN_VOICE_ID || "864a26b8-bfba-4435-9cc5-1dd593de5ca7"
+            voice_id: HEYGEN_CONFIG.VOICE_ID
           },
           is_sandbox: false,
           quality: "high"
         })
       });
       const { data } = await response.json();
-      return data.session_token;
+      return data?.session_token || "";
     } catch (e) {
       setIsLoadingAvatar(false);
       return "";
@@ -206,11 +196,7 @@ const OAvatar: React.FC<{
 
   const fetchAndReadText = async () => {
     try {
-      if (!llmApiUrl || llmApiUrl === 'undefined') {
-        console.error("REACT_APP_LLM_API_URL is not defined");
-        return;
-      }
-      const response = await fetch(`${llmApiUrl}/get_string`);
+      const response = await fetch(`${LLM_CONFIG.API_URL}/get_string`);
       if (!response.ok) throw new Error("Fetch failed");
       const data = await response.json();
       const newText = data.value;

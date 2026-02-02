@@ -3,7 +3,7 @@ import { signal } from "@preact/signals-react";
 import "../styles/ChatPage.css";
 import RAGConfigDisplay from "../components/RAGConfigDisplay";
 import SourceTabs from "../components/SourceTabs";
-import { API_ENDPOINTS } from "../config/apiConfig";
+import { API_ENDPOINTS, HEYGEN_CONFIG } from "../config/apiConfig";
 import { createParser } from "eventsource-parser";
 import OAvatar from "../components/OAvatar";
 import { useVideo } from "../context/VideoContext";
@@ -283,24 +283,19 @@ function ChatPage() {
 
   const fetchAccessToken = async (): Promise<string> => {
     try {
-      console.log("Heygen API KEY")
-      console.log(process.env.REACT_APP_HEYGEN_API_KEY)
-      const heygenApiUrl = process.env.REACT_APP_HEYGEN_API_URL;
-      if (!heygenApiUrl || heygenApiUrl === 'undefined') {
-        throw new Error("REACT_APP_HEYGEN_API_URL is not defined");
-      }
-      const response = await fetch(`${heygenApiUrl}/sessions/token`, {
+      console.log("Heygen API Config:", HEYGEN_CONFIG);
+      const response = await fetch(`${HEYGEN_CONFIG.API_URL}/sessions/token`, {
         method: "POST",
         headers: {
-          "x-api-key": process.env.REACT_APP_HEYGEN_API_KEY || "",
+          "x-api-key": HEYGEN_CONFIG.API_KEY,
           "Content-Type": "application/json",
           accept: "application/json",
         },
         body: JSON.stringify({
           mode: "FULL",
-          avatar_id: process.env.REACT_APP_HEYGEN_AVATAR_NAME,
+          avatar_id: HEYGEN_CONFIG.AVATAR_NAME,
           avatar_persona: {
-            voice_id: process.env.REACT_APP_HEYGEN_VOICE_ID || "864a26b8-bfba-4435-9cc5-1dd593de5ca7"
+            voice_id: HEYGEN_CONFIG.VOICE_ID
           },
           is_sandbox: false,
           quality: "high"
@@ -312,14 +307,14 @@ function ChatPage() {
       }
 
       const { data } = await response.json();
-      return data.session_token;
+      return data?.session_token || "";
     } catch (error) {
       console.error("Error fetching access token:", error);
       throw error;
     }
   };
 
-  const avatarName = process.env.REACT_APP_HEYGEN_AVATAR_NAME;
+  const avatarName = HEYGEN_CONFIG.AVATAR_NAME;
 
   const handleRobotButtonClick = async () => {
     const isAvActive = avatar instanceof StreamingAvatar ? !!(avatar as StreamingAvatar).mediaStream : (avatar instanceof LiveAvatarSession && isVideoActive);
