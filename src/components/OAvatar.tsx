@@ -15,8 +15,8 @@ import { useVideo } from "../context/VideoContext";
 
 
 
-const hygenApiKey = process.env.REACT_APP_HEYGEN_API_KEY;
-const hygenApiUrl = process.env.REACT_APP_HEYGEN_API_URL;
+const heygenApiKey = process.env.REACT_APP_HEYGEN_API_KEY;
+const heygenApiUrl = process.env.REACT_APP_HEYGEN_API_URL;
 const llmApiUrl = process.env.REACT_APP_LLM_API_URL;
 const avatarName = process.env.REACT_APP_HEGYGEN_AVATAR_NAME;
 
@@ -82,10 +82,14 @@ const OAvatar: React.FC<{
 
   const fetchAccessToken = async (): Promise<string> => {
     try {
-      const response = await fetch(`${hygenApiUrl}/sessions/token`, {
+      if (!heygenApiUrl || heygenApiUrl === 'undefined') {
+        console.error("REACT_APP_HEYGEN_API_URL is not defined");
+        return "";
+      }
+      const response = await fetch(`${heygenApiUrl}/sessions/token`, {
         method: "POST",
         headers: {
-          "x-api-key": hygenApiKey || "",
+          "x-api-key": heygenApiKey || "",
           "Content-Type": "application/json",
           accept: "application/json",
         },
@@ -202,6 +206,10 @@ const OAvatar: React.FC<{
 
   const fetchAndReadText = async () => {
     try {
+      if (!llmApiUrl || llmApiUrl === 'undefined') {
+        console.error("REACT_APP_LLM_API_URL is not defined");
+        return;
+      }
       const response = await fetch(`${llmApiUrl}/get_string`);
       if (!response.ok) throw new Error("Fetch failed");
       const data = await response.json();

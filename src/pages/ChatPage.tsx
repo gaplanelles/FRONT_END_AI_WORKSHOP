@@ -285,7 +285,11 @@ function ChatPage() {
     try {
       console.log("Heygen API KEY")
       console.log(process.env.REACT_APP_HEYGEN_API_KEY)
-      const response = await fetch(`${process.env.REACT_APP_HEYGEN_API_URL}/sessions/token`, {
+      const heygenApiUrl = process.env.REACT_APP_HEYGEN_API_URL;
+      if (!heygenApiUrl || heygenApiUrl === 'undefined') {
+        throw new Error("REACT_APP_HEYGEN_API_URL is not defined");
+      }
+      const response = await fetch(`${heygenApiUrl}/sessions/token`, {
         method: "POST",
         headers: {
           "x-api-key": process.env.REACT_APP_HEYGEN_API_KEY || "",

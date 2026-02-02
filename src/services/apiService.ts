@@ -1,17 +1,22 @@
-const hygenApiUrl = process.env.REACT_APP_HYGEN_API_URL;
-const hygenApiKey = process.env.REACT_APP_HYGEN_API_KEY;
+const heygenApiUrl = process.env.REACT_APP_HEYGEN_API_URL;
+const heygenApiKey = process.env.REACT_APP_HEYGEN_API_KEY;
 
 export const fetchAccessToken = async (): Promise<string> => {
-  const response = await fetch(`${hygenApiUrl}/sessions/token`, {
+  if (!heygenApiUrl || heygenApiUrl === 'undefined') {
+    console.error("REACT_APP_HEYGEN_API_URL is not defined");
+    return "";
+  }
+
+  const response = await fetch(`${heygenApiUrl}/sessions/token`, {
     method: "POST",
     headers: {
-      "x-api-key": hygenApiKey || "",
+      "x-api-key": heygenApiKey || "",
       "Content-Type": "application/json",
       "accept": "application/json",
     },
     body: JSON.stringify({
       mode: "FULL",
-      avatar_id: process.env.REACT_APP_HEGYGEN_AVATAR_NAME,
+      avatar_id: process.env.REACT_APP_HEYGEN_AVATAR_NAME,
       avatar_persona: {
         voice_id: process.env.REACT_APP_HEYGEN_VOICE_ID || "864a26b8-bfba-4435-9cc5-1dd593de5ca7"
       },
@@ -21,5 +26,5 @@ export const fetchAccessToken = async (): Promise<string> => {
   });
 
   const { data } = await response.json();
-  return data.session_token;
+  return data?.session_token || "";
 };
