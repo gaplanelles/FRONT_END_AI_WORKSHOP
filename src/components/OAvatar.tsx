@@ -142,7 +142,7 @@ const OAvatar: React.FC<{
         setTimeout(async () => {
           try {
             console.log("Announcing connection...");
-            await newAvatar.repeat("estableciendo conexión con el backend...");
+            await newAvatar.repeat(" ");
           } catch (e) {
             console.warn("Announcement failed", e);
           }
