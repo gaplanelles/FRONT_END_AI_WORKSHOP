@@ -4,7 +4,7 @@
   "description": "Frontend for RAG Application",
   "main": "src/index.js",
   "scripts": {
-    "start": "HOST=0.0.0.0 PORT=9008 react-scripts start",
+    "start": "HOST=0.0.0.0 PORT=9010 react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"

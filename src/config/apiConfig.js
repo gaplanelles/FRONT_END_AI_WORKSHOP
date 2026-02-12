@@ -6,7 +6,7 @@ export const HEYGEN_CONFIG = {
 };
 
 export const LLM_CONFIG = {
-  API_URL: process.env.REACT_APP_LLM_API_URL || "https://81.208.173.145:9007",
+  API_URL: process.env.REACT_APP_LLM_API_URL || "https://80.225.74.219:10001",
 };
 
 export const API_ENDPOINTS = {
@@ -18,4 +18,5 @@ export const API_ENDPOINTS = {
   SETUP_RAG: `${LLM_CONFIG.API_URL}/setup_rag`,
   STRUCTURING_SPEECH: `${LLM_CONFIG.API_URL}/structuring_speech`,
 };
+
 
