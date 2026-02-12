@@ -690,6 +690,25 @@ function ChatPage() {
       </div>
       <div className="d-flex justify-content-center">
         <div className="bottom-section">
+          {isTeamSpeechCollapsed && (
+            <>
+              <aside className="sidebar">
+                <RAGConfigDisplay
+                  configData={configData}
+                  metadata={metadata}
+                  error={error}
+                />
+              </aside>
+              <div className="sources-display">
+                <div className="sources-header pb-2">
+                  <h3 className="mb-1">Sources</h3>
+                </div>
+                <div className="sources-content">
+                  <SourceTabs sources={sources} />
+                </div>
+              </div>
+            </>
+          )}
           <div className={`team-speech-container ${isTeamSpeechCollapsed ? "collapsed" : ""}`}>
             <div className="team-speech-section">
               <h3>Team Blue Speech</h3>
