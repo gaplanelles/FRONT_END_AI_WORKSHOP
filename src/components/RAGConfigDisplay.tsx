@@ -18,13 +18,13 @@ interface Metadata {
 }
 
 interface RAGConfigDisplayProps {
-  configData?: { [section: string]: { [key: string]: any } }| null;
-  metadata?: Metadata| null;
+  configData?: { [section: string]: { [key: string]: any } } | null;
+  metadata?: Metadata | null;
   error?: string | null;
 }
 
 function RAGConfigDisplay({ configData, metadata, error }: RAGConfigDisplayProps) {
-  const getLabel = (section:any, key?:any) => {
+  const getLabel = (section: any, key?: any) => {
     if (metadata && metadata.labels && metadata.labels.EN) {
       return (
         metadata.labels.EN[`${section}.${key}`] ||
@@ -36,7 +36,7 @@ function RAGConfigDisplay({ configData, metadata, error }: RAGConfigDisplayProps
     return key;
   };
 
-  const shouldDisplayField = (section:any, key:any) => {
+  const shouldDisplayField = (section: any, key: any) => {
     if (!metadata || !metadata.config || !configData) return true;
 
     const sectionConfig = metadata.config[section];
@@ -90,7 +90,9 @@ function RAGConfigDisplay({ configData, metadata, error }: RAGConfigDisplayProps
                     {value !== null && value !== undefined
                       ? typeof value === 'object'
                         ? JSON.stringify(value)
-                        : value.toString()
+                        : value.toString() === "ocid1.generativeaimodel.oc1.us-chicago-1.amaaaaaask7dceyadd6ow2hxfppx7dmwmok4pon2jtsw2m2wiwoplexjrqaq"
+                          ? "x-grok-4-1-reasoning"
+                          : value.toString()
                       : 'N/A'}
                   </span>
                 </div>
