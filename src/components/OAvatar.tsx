@@ -206,6 +206,7 @@ const OAvatar: React.FC<{
         setLastReadText(newText);
         // Convert markdown to plain text for TTS
         const plainText = markdownToPlainText(newText);
+        console.log('📢 Avatar will speak (plain text):', plainText);
 
         if (avatar instanceof StreamingAvatar) {
           await avatar.speak({

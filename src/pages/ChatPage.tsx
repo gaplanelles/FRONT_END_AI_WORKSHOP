@@ -253,6 +253,7 @@ function ChatPage() {
       try {
         // Convert markdown to plain text for TTS
         const plainText = markdownToPlainText(content);
+        console.log('📢 Avatar will speak (plain text):', plainText);
 
         if (avatar instanceof StreamingAvatar) {
           await avatar.speak({
