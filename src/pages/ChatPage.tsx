@@ -16,6 +16,7 @@ import {
 } from "../services/chatService";
 import { TaskMode, TaskType } from "@heygen/streaming-avatar";
 import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 import StreamingAvatar, { AvatarQuality, VoiceEmotion, StreamingEvents } from "@heygen/streaming-avatar";
 import { LiveAvatarSession } from "@heygen/liveavatar-web-sdk";
 import VideoCam from "../components/videoCam";
@@ -603,7 +604,7 @@ function ChatPage() {
                 <div id="chatBox" ref={chatBoxRef}>
                   {messages.map((msg: any, index: number) => (
                     <div key={index} className={`message ${msg.type}-message`}>
-                      <ReactMarkdown>{msg.content}</ReactMarkdown>
+                      <ReactMarkdown remarkPlugins={[remarkGfm]}>{msg.content}</ReactMarkdown>
                       {msg?.type === "system" &&
                         isVideoEnabled &&
                         avatar &&

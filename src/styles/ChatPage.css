@@ -25,6 +25,7 @@ body {
   align-items: center;
   height: 55%;
 }
+
 .chat-page-container3 {
   display: flex;
   flex-direction: column;
@@ -39,8 +40,10 @@ body {
   display: flex;
   justify-content: center;
   margin-bottom: 20px;
-  width: 100%; /* Changed from 70% to 100% */
-  max-width: 900px; /* Match the max-width of the container */
+  width: 100%;
+  /* Changed from 70% to 100% */
+  max-width: 900px;
+  /* Match the max-width of the container */
   overflow: hidden;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1), 0 4px 6px rgba(0, 0, 0, 0.1);
   border-radius: 12px;
@@ -59,6 +62,7 @@ body {
   box-sizing: border-box;
   border-image: url('../../public/images/rightRailTopBorder.png') 4 stretch;
 }
+
 .container2 {
   max-width: 900px;
   height: 70%;
@@ -72,6 +76,7 @@ body {
   box-sizing: border-box;
   border-image: url('../../public/images/rightRailTopBorder.png') 4 stretch;
 }
+
 .container3 {
   max-width: 900px;
   height: 30%;
@@ -117,7 +122,7 @@ body {
   font-size: 16px;
 }
 
-.message > div {
+.message>div {
   margin: 0;
   padding: 0;
 }
@@ -150,12 +155,17 @@ body {
 }
 
 /* Adjust spacing for other elements inside system messages */
-.system-message h1, .system-message h2, .system-message h3, 
-.system-message h4, .system-message h5, .system-message h6 {
+.system-message h1,
+.system-message h2,
+.system-message h3,
+.system-message h4,
+.system-message h5,
+.system-message h6 {
   margin: 15px 0 10px 0;
 }
 
-.system-message ul, .system-message ol {
+.system-message ul,
+.system-message ol {
   margin: 0 0 10px 20px;
   padding: 0;
 }
@@ -192,6 +202,59 @@ body {
   text-decoration: underline;
 }
 
+/* Markdown table styling */
+.system-message table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 10px 0;
+  font-size: 14px;
+  overflow-x: auto;
+  display: block;
+}
+
+.system-message table thead {
+  background-color: #69615c;
+  color: #FFFFFF;
+}
+
+.system-message table thead tr th {
+  padding: 12px 8px;
+  text-align: left;
+  font-weight: 600;
+  border: 1px solid #B7B5B3;
+}
+
+.system-message table tbody tr {
+  border-bottom: 1px solid #B7B5B3;
+}
+
+.system-message table tbody tr:nth-of-type(even) {
+  background-color: #F7F5F4;
+}
+
+.system-message table tbody tr:hover {
+  background-color: #eee9e5;
+}
+
+.system-message table tbody tr td {
+  padding: 10px 8px;
+  border: 1px solid #B7B5B3;
+  vertical-align: top;
+}
+
+/* Make tables scrollable on small screens */
+@media (max-width: 768px) {
+  .system-message table {
+    font-size: 12px;
+  }
+
+  .system-message table thead tr th,
+  .system-message table tbody tr td {
+    padding: 8px 6px;
+  }
+}
+
+
 .input-area {
   /* display: flex; */
   /* margin-top: auto; */
@@ -224,15 +287,19 @@ body {
   display: flex;
   align-items: start;
   gap: 20px;
-  min-height: min-content; /* Adjust height based on content */
-  max-height: 40vh; /* Limit maximum height */
-  width: 80%; /* Set width to 70% of the container */
+  min-height: min-content;
+  /* Adjust height based on content */
+  max-height: 40vh;
+  /* Limit maximum height */
+  width: 80%;
+  /* Set width to 70% of the container */
   /* padding-top: 20px; */
   padding-bottom: 20px;
 }
 
 .sidebar {
-  flex: 0 0 30%; /* Set width to 30% and don't allow growth or shrinkage */
+  flex: 0 0 30%;
+  /* Set width to 30% and don't allow growth or shrinkage */
   display: flex;
   flex-direction: column;
   background-color: rgba(252, 251, 250, 0.9);
@@ -250,8 +317,10 @@ body {
   border-radius: 12px;
   padding: 20px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-  overflow: hidden; /* Changed from overflow-y: auto */
-  height: 100%; /* Ensure it takes full height of its container */
+  overflow: hidden;
+  /* Changed from overflow-y: auto */
+  height: 100%;
+  /* Ensure it takes full height of its container */
 }
 
 .sources-header {
@@ -276,21 +345,17 @@ body {
 }
 
 .source-tabs {
-  flex: 1; 
+  flex: 1;
   overflow-y: auto;
 }
 
-.sidebar > *, .sources-display > * {
-  /* flex: 1; */
-  /* overflow-y: auto; */
-}
-
-
 @media (max-width: 768px) {
+
   .chat-interface,
   .bottom-section {
 
-    width: 100%; /* Full width on mobile */
+    width: 100%;
+    /* Full width on mobile */
   }
 
   .bottom-section {
@@ -300,9 +365,11 @@ body {
   .sidebar,
   .sources-display {
     width: 100%;
-    flex: none; /* Remove flex property for mobile layout */
+    flex: none;
+    /* Remove flex property for mobile layout */
   }
 }
+
 .slide-container {
   position: relative;
   overflow: hidden;
@@ -351,15 +418,18 @@ body {
 }
 
 .ms-2 {
-  margin-right: 0.5rem; /* Adjust this value as needed for spacing */
+  margin-right: 0.5rem;
+  /* Adjust this value as needed for spacing */
 }
 
 .me-3 {
-  margin-left: 1rem; /* Adjust this value as needed for spacing */
+  margin-left: 1rem;
+  /* Adjust this value as needed for spacing */
 }
 
 .me-2 {
-  margin-left: 0.5rem; /* Adjust this value as needed for spacing */
+  margin-left: 0.5rem;
+  /* Adjust this value as needed for spacing */
 }
 
 .team-speech-container {
@@ -471,10 +541,21 @@ body {
 }
 
 @keyframes loadingDots {
-  0% { content: '.'; }
-  33% { content: '..'; }
-  66% { content: '...'; }
-  100% { content: '.'; }
+  0% {
+    content: '.';
+  }
+
+  33% {
+    content: '..';
+  }
+
+  66% {
+    content: '...';
+  }
+
+  100% {
+    content: '.';
+  }
 }
 
 .structure-button:hover:not(:disabled) {
@@ -521,25 +602,25 @@ body {
   .team-speech-container {
     padding: 15px;
   }
-  
+
   .team-speech-sections {
     flex-direction: column;
   }
-  
+
   .team-speech-section {
     width: 100%;
   }
-  
+
   .team-speech-content {
     flex-direction: column;
   }
-  
+
   .team-speech-controls {
     flex-direction: row;
     justify-content: center;
     width: 100%;
   }
-  
+
   .structure-button {
     width: 36px;
     height: 36px;
