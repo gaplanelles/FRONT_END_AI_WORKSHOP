@@ -59,20 +59,27 @@ export function markdownToPlainText(markdown: string): string {
 
 /**
  * Converts markdown tables to readable narrative text
- * Example: 
- * Input: | Aspecto | SPW | POLONIA |
- *        |---------|-----|---------|
- *        | Quién   | X   | Y       |
- * Output: "Quién: SPW es X, POLONIA es Y."
  */
 function convertTablesToText(markdown: string): string {
-    // Match markdown tables (including multi-line)
-    const tableRegex = /^\|.+\|[\r\n]+\|[\s\-:]+\|[\r\n]+((?:\|.+\|[\r\n]*)+)/gm;
+    console.log('🔍 Converting tables - input length:', markdown.length);
 
-    return markdown.replace(tableRegex, (match) => {
-        const lines = match.trim().split('\n').map(line => line.trim());
+    // More flexible regex that handles tables with varying whitespace
+    // Matches: header row | separator row | data rows
+    const tableRegex = /\|.+\|\s*\n\s*\|[\s\-:]+\|\s*\n((?:\s*\|.+\|\s*\n?)+)/g;
 
-        if (lines.length < 3) return ''; // Need at least header, separator, and one row
+    let matchCount = 0;
+    const result = markdown.replace(tableRegex, (match) => {
+        matchCount++;
+        console.log(`📊 Found table #${matchCount}:`, match.substring(0, 100) + '...');
+
+        const lines = match.split('\n').map(line => line.trim()).filter(line => line.length > 0);
+
+        console.log('  Table has', lines.length, 'lines');
+
+        if (lines.length < 3) {
+            console.log('  ⚠️ Table too short, skipping');
+            return '';
+        }
 
         // Parse header row
         const headers = lines[0]
@@ -80,44 +87,52 @@ function convertTablesToText(markdown: string): string {
             .map(cell => cell.trim())
             .filter(cell => cell.length > 0);
 
+        console.log('  Headers:', headers);
+
         // Skip separator line (lines[1])
 
-        // Parse data rows
+        // Parse data rows (skip first 2 lines: header + separator)
         const dataRows = lines.slice(2).map(line =>
             line.split('|')
                 .map(cell => cell.trim())
                 .filter(cell => cell.length > 0)
-        );
+        ).filter(row => row.length > 0);
+
+        console.log('  Data rows:', dataRows.length);
 
         // Convert to readable text
         let readableText = '\n';
 
-        // For each data row
-        dataRows.forEach((row) => {
+        dataRows.forEach((row, idx) => {
             if (row.length === 0) return;
 
-            // First column is usually the "label" or "aspect"
+            console.log(`  Processing row ${idx}:`, row);
+
+            // First column is the label/aspect
             const label = row[0];
 
             if (row.length === 2) {
-                // Simple two-column table: Label | Value
+                // Two columns: Label | Value
                 readableText += `${label}: ${row[1]}. `;
             } else if (row.length > 2) {
-                // Multi-column table: create comparisons
+                // Multi-column: Label | Col1 | Col2 | ...
                 readableText += `${label}: `;
 
-                // Add each column with its header
                 const comparisons = [];
                 for (let i = 1; i < row.length && i < headers.length; i++) {
-                    if (row[i]) {
-                        comparisons.push(`${headers[i]} es ${row[i]}`);
+                    if (row[i] && row[i].length > 0) {
+                        comparisons.push(`${headers[i]} - ${row[i]}`);
                     }
                 }
 
-                readableText += comparisons.join(', ') + '. ';
+                readableText += comparisons.join('; ') + '. ';
             }
         });
 
+        console.log('  ✅ Converted to:', readableText.substring(0, 100) + '...');
         return readableText + '\n';
     });
+
+    console.log(`✅ Total tables converted: ${matchCount}`);
+    return result;
 }
