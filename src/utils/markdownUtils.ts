@@ -1,15 +1,32 @@
 /**
  * Converts markdown text to plain text suitable for text-to-speech
  * Removes markdown formatting symbols while preserving readable content
- * Converts tables to narrative format
  */
 export function markdownToPlainText(markdown: string): string {
     if (!markdown) return '';
 
+    console.log('🔍 markdownToPlainText - Input length:', markdown.length);
+    console.log('First 200 chars:', markdown.substring(0, 200));
+
     let text = markdown;
 
-    // Convert markdown tables to readable text
-    text = convertTablesToText(text);
+    // Remove table lines completely (they're hard to read aloud)
+    // Match lines that start with | and contain table content
+    const linesBefore = text.split('\n').length;
+    text = text.split('\n')
+        .filter(line => {
+            const trimmed = line.trim();
+            // Remove lines that look like table rows or separators
+            if (trimmed.startsWith('|') && trimmed.endsWith('|')) {
+                console.log('  ❌ Removing table line:', trimmed.substring(0, 50));
+                return false;
+            }
+            return true;
+        })
+        .join('\n');
+
+    const linesAfter = text.split('\n').length;
+    console.log(`📊 Removed ${linesBefore - linesAfter} table lines`);
 
     // Remove headers (###, ##, #) but keep the text
     text = text.replace(/^#{1,6}\s+(.+)$/gm, '$1');
@@ -54,85 +71,9 @@ export function markdownToPlainText(markdown: string): string {
     // Remove empty lines
     text = text.replace(/^\s*\n/gm, '');
 
-    return text.trim();
-}
+    const result = text.trim();
+    console.log('✅ Final output length:', result.length);
+    console.log('First 200 chars of output:', result.substring(0, 200));
 
-/**
- * Converts markdown tables to readable narrative text
- */
-function convertTablesToText(markdown: string): string {
-    console.log('🔍 Converting tables - input length:', markdown.length);
-
-    // More flexible regex that handles tables with varying whitespace
-    // Matches: header row | separator row | data rows
-    const tableRegex = /\|.+\|\s*\n\s*\|[\s\-:]+\|\s*\n((?:\s*\|.+\|\s*\n?)+)/g;
-
-    let matchCount = 0;
-    const result = markdown.replace(tableRegex, (match) => {
-        matchCount++;
-        console.log(`📊 Found table #${matchCount}:`, match.substring(0, 100) + '...');
-
-        const lines = match.split('\n').map(line => line.trim()).filter(line => line.length > 0);
-
-        console.log('  Table has', lines.length, 'lines');
-
-        if (lines.length < 3) {
-            console.log('  ⚠️ Table too short, skipping');
-            return '';
-        }
-
-        // Parse header row
-        const headers = lines[0]
-            .split('|')
-            .map(cell => cell.trim())
-            .filter(cell => cell.length > 0);
-
-        console.log('  Headers:', headers);
-
-        // Skip separator line (lines[1])
-
-        // Parse data rows (skip first 2 lines: header + separator)
-        const dataRows = lines.slice(2).map(line =>
-            line.split('|')
-                .map(cell => cell.trim())
-                .filter(cell => cell.length > 0)
-        ).filter(row => row.length > 0);
-
-        console.log('  Data rows:', dataRows.length);
-
-        // Convert to readable text
-        let readableText = '\n';
-
-        dataRows.forEach((row, idx) => {
-            if (row.length === 0) return;
-
-            console.log(`  Processing row ${idx}:`, row);
-
-            // First column is the label/aspect
-            const label = row[0];
-
-            if (row.length === 2) {
-                // Two columns: Label | Value
-                readableText += `${label}: ${row[1]}. `;
-            } else if (row.length > 2) {
-                // Multi-column: Label | Col1 | Col2 | ...
-                readableText += `${label}: `;
-
-                const comparisons = [];
-                for (let i = 1; i < row.length && i < headers.length; i++) {
-                    if (row[i] && row[i].length > 0) {
-                        comparisons.push(`${headers[i]} - ${row[i]}`);
-                    }
-                }
-
-                readableText += comparisons.join('; ') + '. ';
-            }
-        });
-
-        console.log('  ✅ Converted to:', readableText.substring(0, 100) + '...');
-        return readableText + '\n';
-    });
-
-    console.log(`✅ Total tables converted: ${matchCount}`);
     return result;
 }
