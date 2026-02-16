@@ -20,6 +20,8 @@ import remarkGfm from 'remark-gfm';
 import StreamingAvatar, { AvatarQuality, VoiceEmotion, StreamingEvents } from "@heygen/streaming-avatar";
 import { LiveAvatarSession } from "@heygen/liveavatar-web-sdk";
 import VideoCam from "../components/videoCam";
+import { markdownToPlainText } from "../utils/markdownUtils";
+
 
 export const isListeningButtonEnabled = signal(false);
 export const isTalkingActive = signal(false);
@@ -249,14 +251,17 @@ function ChatPage() {
   async function speakingByAvatar(content: any) {
     if (avatar) {
       try {
+        // Convert markdown to plain text for TTS
+        const plainText = markdownToPlainText(content);
+
         if (avatar instanceof StreamingAvatar) {
           await avatar.speak({
-            text: content,
+            text: plainText,
             task_type: TaskType.REPEAT,
             taskMode: TaskMode.SYNC,
           });
         } else if (avatar instanceof LiveAvatarSession) {
-          await avatar.repeat(content);
+          await avatar.repeat(plainText);
         }
       } catch (error: any) {
         console.error("Avatar speaking error:", error);

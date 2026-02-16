@@ -13,6 +13,7 @@ import { HEYGEN_CONFIG, LLM_CONFIG } from "../config/apiConfig";
 import { useTranscription } from "../context/TranscriptionContext";
 import { isListeningButtonEnabled, isTalkingActive } from "../pages/ChatPage";
 import { useVideo } from "../context/VideoContext";
+import { markdownToPlainText } from "../utils/markdownUtils";
 
 const OAvatar: React.FC<{
   isVideoEnabled: boolean;
@@ -203,14 +204,17 @@ const OAvatar: React.FC<{
 
       if (newText && newText !== lastReadText && avatar) {
         setLastReadText(newText);
+        // Convert markdown to plain text for TTS
+        const plainText = markdownToPlainText(newText);
+
         if (avatar instanceof StreamingAvatar) {
           await avatar.speak({
-            text: newText,
+            text: plainText,
             task_type: TaskType.REPEAT,
             taskMode: TaskMode.SYNC,
           });
         } else if (avatar instanceof LiveAvatarSession) {
-          await avatar.repeat(newText);
+          await avatar.repeat(plainText);
         }
       }
     } catch (error) {
